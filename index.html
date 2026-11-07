@@ -1,558 +1,325 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f5f7fb">
-
-    <title>EventManager Browser</title>
-
-    <meta name="description" content="EventManager - Your personal web browsing platform.">
-    <meta name="keywords" content="EventManager, Browser, Web Search">
-    <meta name="author" content="EventManager">
-
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101d2b">
+  <meta name="description" content="EVOKER Mini Web Browser - Explore the internet your way.">
+  <title>EVOKER — Mini Web Browser</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- APPLICATION -->
-    <div class="browser-app">
-
-        <!-- HEADER -->
-        <header class="browser-header">
-
-            <div class="brand-area">
-                <div class="brand-logo">E</div>
-
-                <div class="brand-text">
-                    <h1>EventManager</h1>
-                    <span>Web Browser</span>
-                </div>
-            </div>
-
-            <div class="header-actions">
-
-                <button id="themeToggle" class="icon-button" title="Change Theme">
-                    <span>◐</span>
-                </button>
-
-                <button id="settingsButton" class="icon-button" title="Settings">
-                    <span>⚙</span>
-                </button>
-
-                <button id="profileButton" class="profile-button">
-                    Guest
-                </button>
-
-            </div>
-
-        </header>
-
-
-        <!-- TAB BAR -->
-        <section class="tab-section">
-
-            <div class="tabs-container" id="tabsContainer">
-
-                <button class="browser-tab active" data-tab="home">
-                    <span class="tab-icon">⌂</span>
-                    <span>New Tab</span>
-                    <span class="tab-close">×</span>
-                </button>
-
-            </div>
-
-            <button id="newTabButton" class="new-tab-button" title="New Tab">
-                +
-            </button>
-
-        </section>
-
-
-        <!-- NAVIGATION BAR -->
-        <nav class="navigation-bar">
-
-            <div class="navigation-controls">
-
-                <button id="backButton" class="nav-button" title="Back">
-                    ←
-                </button>
-
-                <button id="forwardButton" class="nav-button" title="Forward">
-                    →
-                </button>
-
-                <button id="reloadButton" class="nav-button" title="Reload">
-                    ↻
-                </button>
-
-                <button id="homeButton" class="nav-button" title="Home">
-                    ⌂
-                </button>
-
-            </div>
-
-
-            <!-- ADDRESS BAR -->
-            <form id="searchForm" class="address-form">
-
-                <span id="securityIcon" class="security-icon">
-                    ◉
-                </span>
-
-                <input
-                    type="text"
-                    id="addressInput"
-                    placeholder="Search or enter website address"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-
-                <button type="button" id="clearAddressButton" class="clear-address">
-                    ×
-                </button>
-
-                <button type="submit" class="address-search-button">
-                    Search
-                </button>
-
-            </form>
-
-
-            <div class="navigation-extra">
-
-                <button id="bookmarkButton" class="nav-button" title="Bookmark">
-                    ☆
-                </button>
-
-                <button id="menuButton" class="nav-button" title="Browser Menu">
-                    ⋮
-                </button>
-
-            </div>
-
-        </nav>
-
-
-        <!-- SEARCH SUGGESTIONS -->
-        <div id="suggestionsBox" class="suggestions-box hidden">
-
-            <div class="suggestions-heading">
-                Suggestions
-            </div>
-
-            <div id="suggestionsList"></div>
-
-        </div>
-
-
-        <!-- MAIN CONTENT -->
-        <main id="mainContent">
-
-
-            <!-- HOME PAGE -->
-            <section id="homePage" class="home-page">
-
-                <div class="home-content">
-
-                    <div class="home-logo">
-                        <div class="large-logo">E</div>
-                    </div>
-
-                    <h2>Discover Everything.</h2>
-
-                    <p>
-                        Browse the web, explore information and discover new things.
-                    </p>
-
-
-                    <!-- MAIN SEARCH -->
-                    <form id="homeSearchForm" class="home-search-form">
-
-                        <span class="search-icon">⌕</span>
-
-                        <input
-                            type="text"
-                            id="homeSearchInput"
-                            placeholder="Search the web or enter a URL"
-                            autocomplete="off"
-                        >
-
-                        <button type="submit">
-                            Search
-                        </button>
-
-                    </form>
-
-
-                    <!-- SEARCH ENGINE SELECTOR -->
-                    <div class="search-engine-area">
-
-                        <span>Search with:</span>
-
-                        <select id="searchEngineSelect">
-
-                            <option value="google">Google</option>
-                            <option value="bing">Bing</option>
-                            <option value="duckduckgo">DuckDuckGo</option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- QUICK LINKS -->
-                    <section class="quick-links-section">
-
-                        <div class="section-title">
-                            <h3>Quick Access</h3>
-                            <button id="editShortcutsButton">
-                                Edit
-                            </button>
-                        </div>
-
-                        <div id="quickLinksContainer" class="quick-links-grid">
-
-                            <a href="https://www.google.com" class="quick-link" target="_blank" rel="noopener">
-                                <span>G</span>
-                                <small>Google</small>
-                            </a>
-
-                            <a href="https://www.youtube.com" class="quick-link" target="_blank" rel="noopener">
-                                <span>▶</span>
-                                <small>YouTube</small>
-                            </a>
-
-                            <a href="https://www.wikipedia.org" class="quick-link" target="_blank" rel="noopener">
-                                <span>W</span>
-                                <small>Wikipedia</small>
-                            </a>
-
-                            <a href="https://www.github.com" class="quick-link" target="_blank" rel="noopener">
-                                <span>⌘</span>
-                                <small>GitHub</small>
-                            </a>
-
-                        </div>
-
-                    </section>
-
-                </div>
-
-            </section>
-
-
-            <!-- WEBSITE VIEWER -->
-            <section id="websitePage" class="website-page hidden">
-
-                <div class="website-toolbar">
-
-                    <span id="currentWebsiteTitle">
-                        Website
-                    </span>
-
-                    <button id="openExternalButton">
-                        Open Externally ↗
-                    </button>
-
-                </div>
-
-                <div class="website-warning" id="websiteWarning">
-
-                    Some websites do not allow embedding inside another website.
-                    If a page does not load, use Open Externally.
-
-                </div>
-
-                <iframe
-                    id="websiteFrame"
-                    title="EventManager Website Viewer"
-                    src="about:blank"
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    loading="lazy"
-                    sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"
-                ></iframe>
-
-            </section>
-
-
-            <!-- DISCOVER PAGE -->
-            <section id="discoverPage" class="discover-page hidden">
-
-                <div class="page-heading">
-                    <h2>Discover</h2>
-                    <p>Explore different areas of the internet.</p>
-                </div>
-
-                <div class="discover-grid">
-
-                    <button class="discover-card" data-search="web">
-                        <span>🌐</span>
-                        <strong>Web Search</strong>
-                        <small>Explore websites</small>
-                    </button>
-
-                    <button class="discover-card" data-search="images">
-                        <span>▧</span>
-                        <strong>Images</strong>
-                        <small>Discover pictures</small>
-                    </button>
-
-                    <button class="discover-card" data-search="videos">
-                        <span>▶</span>
-                        <strong>Videos</strong>
-                        <small>Find videos</small>
-                    </button>
-
-                    <button class="discover-card" data-search="news">
-                        <span>▤</span>
-                        <strong>News</strong>
-                        <small>Latest updates</small>
-                    </button>
-
-                    <button class="discover-card" data-search="shopping">
-                        <span>▣</span>
-                        <strong>Shopping</strong>
-                        <small>Explore products</small>
-                    </button>
-
-                    <button class="discover-card" data-search="maps">
-                        <span>⌖</span>
-                        <strong>Maps</strong>
-                        <small>Discover places</small>
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- NEWS PAGE -->
-            <section id="newsPage" class="news-page hidden">
-
-                <div class="page-heading">
-
-                    <h2>Latest News</h2>
-
-                    <p>Discover news from around the world.</p>
-
-                    <button id="refreshNewsButton">
-                        Refresh News
-                    </button>
-
-                </div>
-
-                <div class="news-filters">
-
-                    <button class="news-filter active" data-category="all">All</button>
-                    <button class="news-filter" data-category="india">India</button>
-                    <button class="news-filter" data-category="world">World</button>
-                    <button class="news-filter" data-category="technology">Technology</button>
-                    <button class="news-filter" data-category="sports">Sports</button>
-                    <button class="news-filter" data-category="business">Business</button>
-
-                </div>
-
-                <div id="newsContainer" class="news-grid">
-
-                    <div class="loading-message">
-                        News will appear here.
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- BOOKMARKS PAGE -->
-            <section id="bookmarksPage" class="bookmarks-page hidden">
-
-                <div class="page-heading">
-
-                    <h2>Bookmarks</h2>
-
-                    <p>Your saved websites.</p>
-
-                </div>
-
-                <div id="bookmarksContainer" class="saved-list">
-
-                    <p>No bookmarks yet.</p>
-
-                </div>
-
-            </section>
-
-
-            <!-- HISTORY PAGE -->
-            <section id="historyPage" class="history-page hidden">
-
-                <div class="page-heading">
-
-                    <h2>Browsing History</h2>
-
-                    <p>Recently visited websites.</p>
-
-                    <button id="clearHistoryButton">
-                        Clear History
-                    </button>
-
-                </div>
-
-                <div id="historyContainer" class="saved-list">
-
-                    <p>No browsing history.</p>
-
-                </div>
-
-            </section>
-
-
-            <!-- DOWNLOADS PAGE -->
-            <section id="downloadsPage" class="downloads-page hidden">
-
-                <div class="page-heading">
-
-                    <h2>Downloads</h2>
-
-                    <p>Manage your download links.</p>
-
-                </div>
-
-                <div id="downloadsContainer" class="saved-list">
-
-                    <p>Download information will appear here.</p>
-
-                </div>
-
-            </section>
-
-
-            <!-- SETTINGS PAGE -->
-            <section id="settingsPage" class="settings-page hidden">
-
-                <div class="page-heading">
-
-                    <h2>Browser Settings</h2>
-
-                    <p>Customize your EventManager experience.</p>
-
-                </div>
-
-                <div class="settings-container">
-
-                    <div class="setting-item">
-
-                        <div>
-                            <strong>Search Engine</strong>
-                            <p>Choose your default search provider.</p>
-                        </div>
-
-                        <select id="settingsSearchEngine">
-
-                            <option value="google">Google</option>
-                            <option value="bing">Bing</option>
-                            <option value="duckduckgo">DuckDuckGo</option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="setting-item">
-
-                        <div>
-                            <strong>Appearance</strong>
-                            <p>Choose your browser theme.</p>
-                        </div>
-
-                        <select id="appearanceSelect">
-
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="system">System</option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="setting-item">
-
-                        <div>
-                            <strong>Homepage</strong>
-                            <p>Choose what appears when opening a new tab.</p>
-                        </div>
-
-                        <select id="homepageSelect">
-
-                            <option value="home">Home</option>
-                            <option value="discover">Discover</option>
-                            <option value="news">News</option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="setting-item">
-
-                        <div>
-                            <strong>Clear Browsing Data</strong>
-                            <p>Remove saved browsing history.</p>
-                        </div>
-
-                        <button id="clearDataButton">
-                            Clear Data
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-        </main>
-
-
-        <!-- BROWSER MENU -->
-        <div id="browserMenu" class="browser-menu hidden">
-
-            <button data-page="discover">Discover</button>
-            <button data-page="news">Latest News</button>
-            <button data-page="bookmarks">Bookmarks</button>
-            <button data-page="history">History</button>
-            <button data-page="downloads">Downloads</button>
-            <button data-page="settings">Settings</button>
-
-        </div>
-
-
-        <!-- STATUS BAR -->
-        <footer class="browser-footer">
-
-            <span>EventManager Browser</span>
-
-            <span id="connectionStatus">
-                Ready
-            </span>
-
-        </footer>
-
+<!-- SVG ICON LIBRARY -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h12"/></symbol>
+  <symbol id="i-forward" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6m6 6H3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17l-6-4-6 4z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 19v2h16v-2"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.2 1-1.5 2.6-1.5-.5a8 8 0 0 1-2 .9l-.3 1.6h-3l-.3-1.6a8 8 0 0 1-2-.9l-1.5.5-1.5-2.6 1.2-1a8 8 0 0 1 0-2l-1.2-1 1.5-2.6 1.5.5a8 8 0 0 1 2-.9l.3-1.6h3l.3 1.6a8 8 0 0 1 2 .9l1.5-.5 1.5 2.6-1.2 1a8 8 0 0 1 0 2z" transform="translate(-1 -1)"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18M12 3c-5 5-5 13 0 18"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m4 18 5-5 4 4 3-3 4 4"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15A8 8 0 0 1 9 4a8 8 0 1 0 11 11z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 3 6 6.5 1-4.7 4.6 1.1 6.4-5.9-3.1-5.9 3.1 1.1-6.4L2.5 10 9 9z"/></symbol>
+</svg>
+
+<div class="browser-app">
+
+  <!-- HEADER -->
+  <header class="browser-header">
+    <a class="brand" href="#" onclick="goHome();return false;">
+      <span class="brand-mark">
+        <svg><use href="#i-globe"/></svg>
+      </span>
+      <span>
+        <strong>EVOKER</strong>
+        <small>MINI WEB BROWSER</small>
+      </span>
+    </a>
+
+    <div class="header-actions">
+      <button id="themeToggle" class="icon-button" title="Change theme" aria-label="Change theme">
+        <svg><use href="#i-moon"/></svg>
+      </button>
+      <button id="settingsButton" class="icon-button" title="Settings" aria-label="Settings">
+        <svg><use href="#i-settings"/></svg>
+      </button>
+      <button id="profileButton" class="profile-button" title="Profile">
+        <svg><use href="#i-user"/></svg>
+        <span id="profileLabel">Guest</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <section class="tabs-bar">
+    <div id="tabsContainer" class="tabs-container">
+      <button class="browser-tab active">New Tab</button>
+    </div>
+    <button id="newTabButton" class="icon-button new-tab" title="New tab">
+      <svg><use href="#i-plus"/></svg>
+    </button>
+  </section>
+
+  <!-- NAVIGATION -->
+  <nav class="navigation-bar">
+    <div class="nav-controls">
+      <button id="backButton" class="icon-button" title="Back"><svg><use href="#i-back"/></svg></button>
+      <button id="forwardButton" class="icon-button" title="Forward"><svg><use href="#i-forward"/></svg></button>
+      <button id="reloadButton" class="icon-button" title="Reload"><svg><use href="#i-refresh"/></svg></button>
+      <button id="homeButton" class="icon-button" title="Home"><svg><use href="#i-home"/></svg></button>
     </div>
 
+    <form id="searchForm" class="address-form">
+      <span id="securityIcon"><svg><use href="#i-shield"/></svg></span>
+      <input id="addressInput" type="text" placeholder="Search or enter website address..." autocomplete="off">
+      <button type="button" id="clearAddressButton" class="address-action" aria-label="Clear">
+        <svg><use href="#i-close"/></svg>
+      </button>
+      <button type="submit" class="address-search-button" aria-label="Search">
+        <svg><use href="#i-search"/></svg>
+      </button>
+      <div id="suggestionsBox" class="suggestions-box hidden">
+        <div id="suggestionsList"></div>
+      </div>
+    </form>
 
-    <!-- JAVASCRIPT -->
-    <script src="script.js"></script>
+    <div class="nav-actions">
+      <button id="bookmarkButton" class="icon-button" title="Bookmark"><svg><use href="#i-bookmark"/></svg></button>
+      <button id="menuButton" class="icon-button" title="Menu"><svg><use href="#i-menu"/></svg></button>
+    </div>
+  </nav>
 
+  <!-- MENU -->
+  <div id="browserMenu" class="browser-menu hidden">
+    <button data-page="discover"><svg><use href="#i-globe"/></svg> Discover</button>
+    <button data-page="news"><svg><use href="#i-news"/></svg> News</button>
+    <button data-page="bookmarks"><svg><use href="#i-bookmark"/></svg> Bookmarks</button>
+    <button data-page="history"><svg><use href="#i-clock"/></svg> History</button>
+    <button data-page="downloads"><svg><use href="#i-download"/></svg> Downloads</button>
+    <button data-page="settings"><svg><use href="#i-settings"/></svg> Settings</button>
+    <button id="guestMenuButton"><svg><use href="#i-user"/></svg> Guest Mode</button>
+  </div>
+
+  <main id="mainContent">
+
+    <!-- HOME -->
+    <section id="homePage" class="content-page home-page">
+      <div class="hero-section">
+        <div class="hero-text">
+          <span class="hero-eyebrow">YOUR WEB. YOUR WORLD.</span>
+          <h1>Explore beyond<br><span>the ordinary.</span></h1>
+          <p>A simpler way to discover and explore the internet.</p>
+        </div>
+        <div class="hero-art">
+          <div class="hero-orbit orbit-a"></div>
+          <div class="hero-orbit orbit-b"></div>
+          <div class="hero-globe">
+            <svg><use href="#i-globe"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <form id="homeSearchForm" class="home-search-form">
+        <svg><use href="#i-search"/></svg>
+        <input id="homeSearchInput" type="text" placeholder="What would you like to explore?">
+        <select id="searchEngineSelect" aria-label="Search engine">
+          <option value="google">Google</option>
+          <option value="bing">Bing</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
+        <button type="submit" aria-label="Search"><svg><use href="#i-forward"/></svg></button>
+      </form>
+
+      <div class="section-heading">
+        <div><h2>Quick Access</h2><p>Your favourite places on the web</p></div>
+      </div>
+      <div id="quickLinksContainer" class="quick-links-container"></div>
+
+      <div class="section-heading">
+        <div><h2>Discover</h2><p>Explore different corners of the internet</p></div>
+        <button data-page="discover" class="text-button">View all</button>
+      </div>
+
+      <div class="discover-preview">
+        <button class="preview-card" data-search="web">
+          <svg><use href="#i-globe"/></svg><strong>Web Search</strong><small>Find websites</small>
+        </button>
+        <button class="preview-card" data-search="images">
+          <svg><use href="#i-image"/></svg><strong>Images</strong><small>Explore pictures</small>
+        </button>
+        <button class="preview-card" data-search="videos">
+          <svg><use href="#i-video"/></svg><strong>Videos</strong><small>Watch content</small>
+        </button>
+      </div>
+
+      <div class="home-footer">
+        <span>EVOKER</span>
+        <span>Explore responsibly.</span>
+      </div>
+    </section>
+
+    <!-- WEBSITE VIEWER -->
+    <section id="websitePage" class="content-page hidden">
+      <div class="website-toolbar">
+        <h2 id="currentWebsiteTitle">Website</h2>
+        <button id="openExternalButton" class="premium-button">
+          Open External
+        </button>
+      </div>
+      <div id="websiteWarning" class="website-warning">
+        Some websites block embedded viewing. If this page does not load, use Open External.
+      </div>
+      <iframe id="websiteFrame" title="Website viewer"
+        sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+
+    <!-- DISCOVER -->
+    <section id="discoverPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>EXPLORE</span><h1>Discover the web</h1>
+        <p>Choose a category to start exploring.</p>
+      </div>
+      <div class="discover-grid">
+        <button class="discover-card" data-search="web"><svg><use href="#i-globe"/></svg><strong>Web</strong><small>Search websites</small></button>
+        <button class="discover-card" data-search="images"><svg><use href="#i-image"/></svg><strong>Images</strong><small>Find pictures</small></button>
+        <button class="discover-card" data-search="videos"><svg><use href="#i-video"/></svg><strong>Videos</strong><small>Explore videos</small></button>
+        <button class="discover-card" data-search="news"><svg><use href="#i-news"/></svg><strong>News</strong><small>Latest headlines</small></button>
+        <button class="discover-card" data-search="shopping"><svg><use href="#i-star"/></svg><strong>Shopping</strong><small>Explore products</small></button>
+        <button class="discover-card" data-search="maps"><svg><use href="#i-globe"/></svg><strong>Maps</strong><small>Explore places</small></button>
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section id="newsPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>THE LATEST</span><h1>News Explorer</h1>
+        <p>Discover headlines from around the world.</p>
+      </div>
+      <div class="news-filters">
+        <button class="news-filter active" data-category="all">All</button>
+        <button class="news-filter" data-category="india">India</button>
+        <button class="news-filter" data-category="world">World</button>
+        <button class="news-filter" data-category="technology">Technology</button>
+        <button class="news-filter" data-category="sports">Sports</button>
+        <button class="news-filter" data-category="business">Business</button>
+      </div>
+      <button id="refreshNewsButton" class="secondary-button">
+        <svg><use href="#i-refresh"/></svg> Refresh News
+      </button>
+      <div id="newsContainer" class="news-container"></div>
+    </section>
+
+    <!-- BOOKMARKS -->
+    <section id="bookmarksPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>YOUR COLLECTION</span><h1>Bookmarks</h1>
+        <p>Websites you want to keep close.</p>
+      </div>
+      <div id="bookmarksContainer" class="saved-container"></div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="historyPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>YOUR ACTIVITY</span><h1>Browsing History</h1>
+        <p>Previously visited websites.</p>
+      </div>
+      <button id="clearHistoryButton" class="secondary-button">
+        <svg><use href="#i-trash"/></svg> Clear History
+      </button>
+      <div id="historyContainer" class="saved-container"></div>
+    </section>
+
+    <!-- DOWNLOADS -->
+    <section id="downloadsPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>YOUR FILES</span><h1>Downloads</h1>
+        <p>Your recorded downloads.</p>
+      </div>
+      <div id="downloadsContainer" class="saved-container"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settingsPage" class="content-page hidden">
+      <div class="page-heading">
+        <span>PERSONALIZE</span><h1>Browser Settings</h1>
+        <p>Make EVOKER work your way.</p>
+      </div>
+
+      <div class="settings-group">
+        <label for="settingsSearchEngine">Default Search Engine</label>
+        <select id="settingsSearchEngine">
+          <option value="google">Google</option>
+          <option value="bing">Bing</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label for="appearanceSelect">Appearance</label>
+        <select id="appearanceSelect">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label for="homepageSelect">Startup Page</label>
+        <select id="homepageSelect">
+          <option value="home">Home</option>
+          <option value="discover">Discover</option>
+          <option value="news">News</option>
+        </select>
+      </div>
+
+      <button id="clearDataButton" class="danger-button">
+        <svg><use href="#i-trash"/></svg> Clear Browser Data
+      </button>
+    </section>
+
+  </main>
+
+  <!-- GUEST MODE MODAL -->
+  <div id="guestPanel" class="modal-overlay hidden">
+    <div class="guest-card">
+      <button id="closeGuestButton" class="modal-close" aria-label="Close">
+        <svg><use href="#i-close"/></svg>
+      </button>
+      <div class="guest-illustration">
+        <svg><use href="#i-user"/></svg>
+      </div>
+      <span class="hero-eyebrow">WELCOME TO EVOKER</span>
+      <h2>Browse as a Guest</h2>
+      <p>Explore the web without creating an account.</p>
+      <button id="continueGuestButton" class="premium-button">Continue as Guest</button>
+      <small>Guest activity may be stored locally on this device.</small>
+    </div>
+  </div>
+
+  <!-- FOOTER STATUS -->
+  <footer class="browser-footer">
+    <span id="connectionStatus">Ready</span>
+    <span>EVOKER Mini Web Browser</span>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
