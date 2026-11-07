@@ -1,273 +1,459 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EventManager</title>
+<title>EventManager — All-in-One Discovery Hub</title>
+<meta name="description" content="Discover websites, images, videos, news, products, services and more.">
 <style>
+:root{
+ --bg:#f5f7fc;--card:#fff;--text:#17243b;
+ --muted:#6b7890;--primary:#315efb;--line:#e6eaf2;
+ --soft:#edf1ff;--shadow:0 12px 35px #17243b0b
+}
+body.dark{
+ --bg:#101827;--card:#192438;--text:#f0f4ff;
+ --muted:#a9b5ca;--line:#2b3850;--soft:#253252;
+ --shadow:0 12px 35px #0003
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f7fc;color:#18243a}
-header{background:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:24px;font-weight:bold;color:#315efb}
-.hero{margin:25px auto;max-width:1100px;padding:45px 25px;border-radius:20px;background:linear-gradient(120deg,#172c58,#315efb);color:white}
-.hero h1{font-size:clamp(32px,5vw,52px);margin:10px 0}
-.hero p{line-height:1.6}
-.search{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}
-input,select{padding:14px;border:0;border-radius:9px;font-size:15px;min-width:0}
-input{flex:1}
-button{padding:14px 22px;border:0;border-radius:9px;background:#12b8a6;color:white;font-weight:bold;cursor:pointer}
-main{max-width:1100px;margin:auto;padding:0 20px}
-h2{margin-top:40px}
-.categories,.results{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.category,.business{background:white;padding:20px;border-radius:13px;border:1px solid #e5eaf2}
-.category{cursor:pointer}
-.category:hover{border-color:#315efb}
-.category strong{display:block;margin-bottom:7px}
-.category small,.muted{color:#68758b;line-height:1.5}
-.filters{margin:20px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.filters select{border:1px solid #ddd;background:white}
-.status{background:white;padding:15px;border-radius:10px;margin:15px 0;color:#536078;line-height:1.5}
-.business h3{margin:8px 0}
-.business p{font-size:13px;color:#68758b;line-height:1.6;overflow-wrap:anywhere}
-.business a{display:inline-block;margin:5px 5px 0 0;color:#315efb;text-decoration:none;font-weight:bold;font-size:13px}
-footer{text-align:center;background:#17243b;color:white;padding:25px;margin-top:50px}
-@media(max-width:700px){.categories,.results{grid-template-columns:repeat(2,1fr)}.search input{flex-basis:100%}}
-@media(max-width:430px){.categories,.results{grid-template-columns:1fr}}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,Helvetica,sans-serif;
+ transition:.2s
+}
+button,input,select{font:inherit}
+header{
+ height:75px;background:var(--card);
+ border-bottom:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 6%;position:sticky;top:0;z-index:10
+}
+.logo{font-size:25px;font-weight:800;letter-spacing:-1px}
+.logo span{color:var(--primary)}
+.header-right{display:flex;gap:10px;align-items:center}
+.header-btn{
+ border:1px solid var(--line);background:var(--card);
+ color:var(--text);padding:10px 14px;border-radius:9px;
+ cursor:pointer
+}
+.hero{
+ max-width:1100px;margin:60px auto 35px;
+ text-align:center;padding:20px
+}
+.label{
+ display:inline-block;padding:8px 14px;border-radius:30px;
+ background:var(--soft);color:var(--primary);
+ font-size:12px;font-weight:bold;letter-spacing:1px
+}
+.hero h1{
+ font-size:clamp(36px,6vw,66px);
+ letter-spacing:-2px;margin:20px 0 12px
+}
+.hero h1 span{color:var(--primary)}
+.hero p{
+ color:var(--muted);font-size:17px;line-height:1.7
+}
+.search-box{
+ max-width:800px;margin:30px auto 15px;
+ background:var(--card);padding:9px;
+ border:1px solid var(--line);border-radius:16px;
+ display:flex;gap:8px;box-shadow:var(--shadow)
+}
+.search-box input{
+ flex:1;min-width:0;border:0;outline:0;
+ padding:15px;background:transparent;color:var(--text);
+ font-size:16px
+}
+.search-box button{
+ background:var(--primary);color:white;border:0;
+ border-radius:11px;padding:0 28px;font-weight:bold;
+ cursor:pointer
+}
+.search-options{
+ display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+ margin:15px auto
+}
+.search-options button{
+ border:1px solid var(--line);background:var(--card);
+ color:var(--muted);padding:9px 15px;border-radius:30px;
+ cursor:pointer;font-size:13px
+}
+.search-options button.active{
+ background:var(--soft);color:var(--primary);
+ border-color:var(--primary)
+}
+.container{max-width:1150px;margin:auto;padding:0 20px}
+.section{margin:55px 0}
+.section-title{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:15px;margin-bottom:20px
+}
+.section-title h2{font-size:25px;margin:0}
+.section-title p{color:var(--muted);font-size:14px}
+.category-grid{
+ display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+}
+.category{
+ text-align:left;background:var(--card);
+ border:1px solid var(--line);border-radius:15px;
+ padding:20px;cursor:pointer;color:var(--text);
+ transition:.2s
+}
+.category:hover{
+ transform:translateY(-3px);
+ border-color:var(--primary);box-shadow:var(--shadow)
+}
+.category-icon{
+ width:44px;height:44px;border-radius:12px;
+ background:var(--soft);color:var(--primary);
+ display:grid;place-items:center;font-size:22px;
+ margin-bottom:14px
+}
+.category strong{display:block;font-size:15px}
+.category small{
+ display:block;color:var(--muted);
+ margin-top:6px;line-height:1.5
+}
+.results{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:14px;margin-top:20px
+}
+.result{
+ padding:20px;background:var(--card);
+ border:1px solid var(--line);border-radius:14px;
+ overflow-wrap:anywhere
+}
+.result h3{margin:0 0 9px;font-size:17px}
+.result p{color:var(--muted);font-size:13px;line-height:1.6}
+.result a{
+ color:var(--primary);font-size:13px;
+ font-weight:bold;text-decoration:none
+}
+.result-type{
+ display:inline-block;background:var(--soft);
+ color:var(--primary);padding:5px 9px;
+ border-radius:20px;font-size:11px;margin-bottom:10px
+}
+.status{
+ text-align:center;background:var(--card);
+ border:1px solid var(--line);border-radius:13px;
+ padding:22px;color:var(--muted);line-height:1.6
+}
+.history{
+ display:flex;flex-wrap:wrap;gap:9px
+}
+.history button{
+ padding:9px 13px;border:1px solid var(--line);
+ background:var(--card);color:var(--muted);
+ border-radius:30px;cursor:pointer
+}
+footer{
+ background:#14213a;color:white;
+ text-align:center;padding:40px 20px;margin-top:70px
+}
+footer p{color:#aebbd0;font-size:13px}
+@media(max-width:750px){
+ .category-grid{grid-template-columns:repeat(2,1fr)}
+ .hero{margin-top:35px}
+ header{padding:0 15px}
+ .results{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+ .search-box{flex-wrap:wrap}
+ .search-box input{flex-basis:100%}
+ .search-box button{height:48px;width:100%}
+ .category-grid{gap:9px}
+ .category{padding:14px}
+}
 </style>
 </head>
+
 <body>
 
 <header>
- <div class="logo">EventManager</div>
- <span>Find Event Services</span>
+ <div class="logo">Event<span>Manager</span></div>
+ <div class="header-right">
+  <button class="header-btn" onclick="toggleTheme()">Theme</button>
+ </div>
 </header>
 
 <section class="hero">
- <div class="eyebrow">PLAN BETTER. CELEBRATE BIGGER.</div>
- <h1>Find Event Services Near You</h1>
- <p>Discover event venues, photographers, caterers and other local services.</p>
+ <div class="label">ALL-IN-ONE DISCOVERY HUB</div>
+ <h1>Discover <span>Everything.</span></h1>
+ <p>
+  Search websites, images, videos, products, businesses,
+  education, technology and much more.
+ </p>
 
- <form class="search" id="searchForm">
-  <input id="location" placeholder="Enter city, district or PIN code" required>
-  <select id="category">
-   <option value="all">All Services</option>
-   <option value="wedding">Wedding Venues</option>
-   <option value="party">Party Venues</option>
-   <option value="venue">Event Halls</option>
-   <option value="catering">Catering</option>
-   <option value="photo">Photography</option>
-   <option value="decoration">Party Shops</option>
-  </select>
-  <button id="searchBtn">Search</button>
+ <form class="search-box" id="searchForm">
+  <input id="query" placeholder="Search anything on the internet..." required>
+  <button type="submit">Search</button>
  </form>
+
+ <div class="search-options" id="searchOptions">
+  <button class="active" data-type="web">All Web</button>
+  <button data-type="images">Images</button>
+  <button data-type="videos">Videos</button>
+  <button data-type="news">News</button>
+  <button data-type="shopping">Shopping</button>
+  <button data-type="maps">Maps</button>
+ </div>
 </section>
 
-<main>
-<h2>Explore Categories</h2>
-<div class="categories">
- <div class="category" data-cat="wedding"><strong>Wedding Venues</strong><small>Wedding celebration places</small></div>
- <div class="category" data-cat="party"><strong>Party Venues</strong><small>Birthday and party places</small></div>
- <div class="category" data-cat="venue"><strong>Event Halls</strong><small>Banquet halls and venues</small></div>
- <div class="category" data-cat="catering"><strong>Catering</strong><small>Restaurants and food services</small></div>
- <div class="category" data-cat="photo"><strong>Photography</strong><small>Photographers and studios</small></div>
- <div class="category" data-cat="decoration"><strong>Party Shops</strong><small>Party supplies and decoration</small></div>
-</div>
+<main class="container">
 
-<h2>Businesses Near You</h2>
-<div class="filters">
- <label for="radius">Distance:</label>
- <select id="radius">
-  <option value="5">5 KM</option>
-  <option value="10">10 KM</option>
-  <option value="25" selected>25 KM</option>
-  <option value="50">50 KM</option>
-  <option value="100">100 KM</option>
-  <option value="all">All Results</option>
- </select>
- <span id="count" class="muted"></span>
-</div>
+<section class="section">
+ <div class="section-title">
+  <div>
+   <h2>Explore Everything</h2>
+   <p>Choose a category to discover more.</p>
+  </div>
+ </div>
 
-<div class="status" id="status">Enter a location and press Search.</div>
-<div class="results" id="results"></div>
+ <div class="category-grid" id="categories">
 
-<p class="muted">Business information is sourced from OpenStreetMap. Details depend on available public map data. EventManager does not verify these listings.</p>
+  <button class="category" data-search="websites">
+   <div class="category-icon">⌕</div>
+   <strong>Websites</strong>
+   <small>Discover websites and online resources</small>
+  </button>
+
+  <button class="category" data-search="online shopping products">
+   <div class="category-icon">▣</div>
+   <strong>Shopping</strong>
+   <small>Products, stores and shopping websites</small>
+  </button>
+
+  <button class="category" data-search="business companies">
+   <div class="category-icon">▦</div>
+   <strong>Business</strong>
+   <small>Companies and business information</small>
+  </button>
+
+  <button class="category" data-search="local services near me">
+   <div class="category-icon">⌖</div>
+   <strong>Local Services</strong>
+   <small>Find services around your location</small>
+  </button>
+
+  <button class="category" data-search="education courses learning">
+   <div class="category-icon">▤</div>
+   <strong>Education</strong>
+   <small>Courses, schools and study resources</small>
+  </button>
+
+  <button class="category" data-search="technology software">
+   <div class="category-icon">⌘</div>
+   <strong>Technology</strong>
+   <small>Software, apps and tech information</small>
+  </button>
+
+  <button class="category" data-search="games gaming">
+   <div class="category-icon">◈</div>
+   <strong>Games</strong>
+   <small>Games, gaming websites and guides</small>
+  </button>
+
+  <button class="category" data-search="news today">
+   <div class="category-icon">▧</div>
+   <strong>News</strong>
+   <small>Latest news and information</small>
+  </button>
+
+  <button class="category" data-search="travel hotels">
+   <div class="category-icon">✈</div>
+   <strong>Travel</strong>
+   <small>Destinations, hotels and journeys</small>
+  </button>
+
+  <button class="category" data-search="food restaurants recipes">
+   <div class="category-icon">♨</div>
+   <strong>Food</strong>
+   <small>Restaurants, recipes and food</small>
+  </button>
+
+  <button class="category" data-search="movies entertainment">
+   <div class="category-icon">▷</div>
+   <strong>Entertainment</strong>
+   <small>Movies, music and entertainment</small>
+  </button>
+
+  <button class="category" data-search="event management party planning">
+   <div class="category-icon">✦</div>
+   <strong>Events</strong>
+   <small>Weddings, parties and event services</small>
+  </button>
+
+  <button class="category" data-search="jobs careers">
+   <div class="category-icon">▣</div>
+   <strong>Jobs</strong>
+   <small>Careers and job opportunities</small>
+  </button>
+
+  <button class="category" data-search="health fitness">
+   <div class="category-icon">♡</div>
+   <strong>Health & Fitness</strong>
+   <small>Fitness and general wellness resources</small>
+  </button>
+
+  <button class="category" data-search="science research">
+   <div class="category-icon">⌬</div>
+   <strong>Science</strong>
+   <small>Research and scientific discoveries</small>
+  </button>
+
+  <button class="category" data-search="sports">
+   <div class="category-icon">⚽</div>
+   <strong>Sports</strong>
+   <small>Sports news, teams and games</small>
+  </button>
+
+ </div>
+</section>
+
+<section class="section" id="resultSection">
+ <div class="section-title">
+  <div>
+   <h2>Search Results</h2>
+   <p>Choose a search type and explore results.</p>
+  </div>
+ </div>
+ <div class="status" id="status">
+  Your search results will appear here.
+ </div>
+ <div class="results" id="results"></div>
+</section>
+
+<section class="section">
+ <div class="section-title">
+  <div>
+   <h2>Recent Searches</h2>
+   <p>Your searches are saved on this device.</p>
+  </div>
+  <button class="header-btn" onclick="clearHistory()">Clear</button>
+ </div>
+ <div class="history" id="history"></div>
+</section>
+
 </main>
 
 <footer>
- <h3>EventManager</h3>
-Discover Local Event Services
+ <div class="logo">Event<span>Manager</span></div>
+ <p>One place. Endless discoveries.</p>
+ <p>© 2026 EventManager</p>
 </footer>
 
 <script>
+let currentType="web";
 const $=id=>document.getElementById(id);
-let allResults=[];
 
-const queries={
- all:['"amenity"~"events_venue|restaurant|community_centre|conference_centre"','"shop"~"party|photo|caterer"','"craft"="photographer"'],
- wedding:['"amenity"="events_venue"','"leisure"="wedding_venue"','"building"="banquet_hall"'],
- party:['"amenity"~"events_venue|community_centre"','"shop"="party"'],
- venue:['"amenity"~"events_venue|conference_centre|community_centre"','"leisure"="venue"'],
- catering:['"amenity"="restaurant"','"shop"="caterer"'],
- photo:['"craft"="photographer"','"shop"="photo"'],
- decoration:['"shop"="party"','"shop"="gift"']
-};
-
-function distance(a,b,c,d){
- const rad=x=>x*Math.PI/180;
- const x=rad(c-a),y=rad(d-b);
- const v=Math.sin(x/2)**2+
- Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(y/2)**2;
- return 6371*2*Math.atan2(Math.sqrt(v),Math.sqrt(1-v));
+function toggleTheme(){
+ document.body.classList.toggle("dark");
+ localStorage.setItem("em-theme",
+  document.body.classList.contains("dark")?"dark":"light");
 }
 
-function render(){
- const r=$('radius').value;
- const list=allResults.filter(x=>r==='all'||x.distance<=Number(r))
- .sort((a,b)=>a.distance-b.distance);
-
- $('count').textContent=list.length+' results';
-
- if(!list.length){
-  $('results').innerHTML='<div class="business">No matching businesses found. Try another location or larger distance.</div>';
-  return;
- }
-
- $('results').innerHTML=list.map(x=>{
-  const t=x.tags;
-  const address=[
-   t['addr:housenumber'],t['addr:street'],
-   t['addr:suburb'],t['addr:city']||t['addr:town']||t['addr:village'],
-   t['addr:state'],t['addr:postcode']
-  ].filter(Boolean).join(', ');
-
-  const phone=t.phone||t['contact:phone'];
-  const website=t.website||t['contact:website'];
-
-  return `
-  <article class="business">
-   <h3>${safe(t.name||'Unnamed place')}</h3>
-   <p>${safe(address||'Address not available')}</p>
-   ${phone?'<p>Phone: '+safe(phone)+'</p>':''}
-   ${t.opening_hours?'<p>Hours: '+safe(t.opening_hours)+'</p>':''}
-   <p>Distance: ${x.distance.toFixed(1)} km</p>
-   ${phone?'<a href="tel:'+encodeURIComponent(phone)+'">Call</a>':''}
-   ${website&&/^https?:\/\//i.test(website)?'<a target="_blank" rel="noopener" href="'+safe(website)+'">Website</a>':''}
-   <a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.lat+','+x.lon+'">Directions</a>
-   <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/'+x.type+'/'+x.id+'">Details</a>
-  </article>`;
- }).join('');
+if(localStorage.getItem("em-theme")==="dark"){
+ document.body.classList.add("dark");
 }
 
-function safe(s){
+function setType(type){
+ currentType=type;
+ document.querySelectorAll("#searchOptions button")
+ .forEach(b=>b.classList.toggle("active",b.dataset.type===type));
+}
+
+document.querySelectorAll("#searchOptions button")
+.forEach(button=>{
+ button.addEventListener("click",()=>setType(button.dataset.type));
+});
+
+function getSearchUrl(q,type){
+ const query=encodeURIComponent(q);
+ const urls={
+  web:"https://www.google.com/search?q="+query,
+  images:"https://www.google.com/search?tbm=isch&q="+query,
+  videos:"https://www.youtube.com/results?search_query="+query,
+  news:"https://news.google.com/search?q="+query,
+  shopping:"https://www.google.com/search?tbm=shop&q="+query,
+  maps:"https://www.google.com/maps/search/?api=1&query="+query
+ };
+ return urls[type]||urls.web;
+}
+
+function saveHistory(q){
+ let history=JSON.parse(localStorage.getItem("em-history")||"[]");
+ history=[q,...history.filter(x=>x!==q)].slice(0,10);
+ localStorage.setItem("em-history",JSON.stringify(history));
+ showHistory();
+}
+
+function showHistory(){
+ const history=JSON.parse(localStorage.getItem("em-history")||"[]");
+ $("history").innerHTML=history.map(q=>
+  '<button type="button" onclick="repeatSearch('+JSON.stringify(q).replace(/</g,"\\u003c")+')">'+
+  escapeHTML(q)+'</button>'
+ ).join("")||'<span class="muted">No searches yet.</span>';
+}
+
+function escapeHTML(s){
  return String(s).replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  })[c]);
 }
 
-$('radius').addEventListener('change',render);
+function search(q){
+ q=q.trim();
+ if(!q)return;
 
-$('searchForm').addEventListener('submit',async e=>{
+ saveHistory(q);
+
+ const url=getSearchUrl(q,currentType);
+ $("status").textContent=
+  "Search category: "+currentType+
+  ". Open the result below to explore matching results.";
+
+ $("results").innerHTML=`
+  <article class="result">
+   <span class="result-type">${escapeHTML(currentType)}</span>
+   <h3>Explore: ${escapeHTML(q)}</h3>
+   <p>Open the search results from the selected search provider.</p>
+   <a href="${url}" target="_blank" rel="noopener noreferrer">
+    Open Search Results →
+   </a>
+  </article>
+ `;
+
+ $("resultSection").scrollIntoView({behavior:"smooth"});
+}
+
+$("searchForm").addEventListener("submit",e=>{
  e.preventDefault();
-
- const place=$('location').value.trim();
- if(!place)return;
-
- $('searchBtn').disabled=true;
- $('searchBtn').textContent='Searching...';
- $('status').textContent='Finding location...';
- $('results').innerHTML='';
- allResults=[];
-
- try{
-  const geoResponse=await fetch(
-   'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+
-   encodeURIComponent(place)
-  );
-
-  if(!geoResponse.ok)throw new Error('Location service unavailable. Try again later.');
-
-  const geo=await geoResponse.json();
-  if(!geo.length)throw new Error('Location not found. Check the spelling.');
-
-  const lat=Number(geo[0].lat);
-  const lon=Number(geo[0].lon);
-
-  $('status').textContent='Searching nearby businesses...';
-
-  const selected=queries[$('category').value];
-  const parts=[];
-
-  selected.forEach(q=>{
-   ['node','way','relation'].forEach(type=>{
-    parts.push(type+'(around:100000,'+lat+','+lon+')'+'['+q+'][name];');
-   });
-  });
-
-  const overpassQuery='[out:json][timeout:25];('+parts.join('')+');out center tags;';
-
-  const servers=[
-   'https://overpass-api.de/api/interpreter',
-   'https://overpass.kumi.systems/api/interpreter'
-  ];
-
-  let data=null;
-
-  for(const server of servers){
-   try{
-    const response=await fetch(server,{
-     method:'POST',
-     headers:{'Content-Type':'text/plain;charset=UTF-8'},
-     body:overpassQuery
-    });
-    if(!response.ok)continue;
-    data=await response.json();
-    break;
-   }catch(err){}
-  }
-
-  if(!data)throw new Error('Business search server is busy. Please try again.');
-
-  const unique=new Map();
-
-  (data.elements||[]).forEach(el=>{
-   const t=el.tags||{};
-   if(!t.name)return;
-
-   const p=el.center||el;
-   if(p.lat==null||p.lon==null)return;
-
-   const d=distance(lat,lon,Number(p.lat),Number(p.lon));
-   if(d>100)return;
-
-   unique.set(el.type+'/'+el.id,{
-    id:el.id,type:el.type,tags:t,
-    lat:Number(p.lat),lon:Number(p.lon),distance:d
-   });
-  });
-
-  allResults=[...unique.values()];
-
-  $('status').textContent=allResults.length?
-   'Search complete. These are mapped places, not verified recommendations.':
-   'No matching places found in this area. Try another category.';
-
-  render();
-
- }catch(error){
-  $('status').textContent=error.message||'Something went wrong. Try again.';
- }finally{
-  $('searchBtn').disabled=false;
-  $('searchBtn').textContent='Search';
- }
+ search($("query").value);
 });
 
-document.querySelectorAll('.category').forEach(btn=>{
- btn.addEventListener('click',()=>{
-  $('category').value=btn.dataset.cat;
-  $('location').focus();
-  $('searchForm').scrollIntoView({behavior:'smooth',block:'center'});
+document.querySelectorAll(".category").forEach(card=>{
+ card.addEventListener("click",()=>{
+  $("query").value=card.dataset.search;
+  setType("web");
+  search(card.dataset.search);
  });
 });
+
+function repeatSearch(q){
+ $("query").value=q;
+ setType("web");
+ search(q);
+}
+
+function clearHistory(){
+ localStorage.removeItem("em-history");
+ showHistory();
+}
+
+showHistory();
 </script>
 </body>
 </html>
