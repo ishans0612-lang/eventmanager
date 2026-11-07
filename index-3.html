@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventManager — Find Event Professionals</title>
+<meta name="description" content="Discover event planners, venues, caterers, photographers and event services near you.">
+<style>
+:root{--ink:#17243b;--muted:#68758b;--blue:#315efb;--teal:#12b8a6;--bg:#f6f8fc;--line:#e7ebf3}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(5%,calc((100% - 1180px)/2));gap:20px}
+.brand{font-size:23px;font-weight:800;letter-spacing:-.8px}.brand span{color:var(--blue)}
+nav{display:flex;gap:24px}nav a{color:#536078;text-decoration:none;font-size:14px;font-weight:600}
+.hero{max-width:1180px;margin:34px auto 0;padding:0 22px}
+.hero-box{min-height:440px;border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(90deg,rgba(12,24,48,.88),rgba(12,24,48,.35)),url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=85') center/cover;display:flex;align-items:center;padding:clamp(28px,6vw,76px);color:#fff}
+.hero-content{max-width:690px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b9fff2;font-weight:800}
+h1{font-size:clamp(36px,5.5vw,64px);line-height:1.06;letter-spacing:-2px;margin:16px 0}
+.hero p{font-size:17px;line-height:1.7;color:#e4eaf4;max-width:580px}
+.search{margin-top:28px;background:#fff;border-radius:15px;padding:9px;display:flex;gap:8px;max-width:720px;box-shadow:0 12px 40px #06122b44}
+.search input,.search select{min-width:0;border:0;outline:0;padding:14px 12px;font-size:14px;color:var(--ink);background:#fff}
+.search input{flex:1}.search select{max-width:190px;border-left:1px solid var(--line)}
+.search button{border:0;border-radius:10px;background:var(--blue);color:#fff;padding:0 24px;font-weight:700;cursor:pointer}
+.section{max-width:1180px;margin:64px auto;padding:0 22px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}
+h2{font-size:29px;letter-spacing:-.8px;margin:0 0 8px}.sub{color:var(--muted);margin:0;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.category{background:#fff;border:1px solid var(--line);border-radius:17px;padding:22px;text-align:left;cursor:pointer;transition:.2s}
+.category:hover{transform:translateY(-3px);border-color:#b9c8ff;box-shadow:0 12px 30px #263b6710}
+.category .symbol{width:46px;height:46px;border-radius:13px;background:#eef2ff;color:var(--blue);display:grid;place-items:center;font-size:23px;margin-bottom:15px}
+.category strong{display:block;font-size:16px}.category small{display:block;color:var(--muted);margin-top:6px;line-height:1.4}
+.info{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.info h3{margin:0 0 10px;font-size:20px}.info p{color:var(--muted);line-height:1.7;margin:0}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}
+.step{background:#f7f9ff;border-radius:14px;padding:18px}.step b{color:var(--blue);font-size:13px}.step h3{font-size:16px;margin:8px 0}.step p{font-size:13px}
+footer{margin-top:65px;background:#14213a;color:#dce5f5;padding:35px 22px;text-align:center}footer p{font-size:13px;color:#aebbd0}
+@media(max-width:760px){header{padding:0 18px;height:66px}nav{gap:12px}nav a{font-size:12px}.grid{grid-template-columns:repeat(2,1fr)}.info{grid-template-columns:1fr}.search{flex-wrap:wrap}.search input{flex-basis:100%}.search select{flex:1;max-width:none;border-left:0;border-top:1px solid var(--line)}.search button{height:48px;flex:1}.steps{grid-template-columns:1fr}.hero-box{min-height:500px}}
+@media(max-width:420px){nav a:nth-child(2){display:none}.grid{gap:10px}.category{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Event<span>Manager</span></div>
+  <nav><a href="#categories">Categories</a><a href="#how">How it works</a><a href="#about">About</a></nav>
+</header>
+<main>
+<section class="hero">
+ <div class="hero-box">
+  <div class="hero-content">
+   <div class="eyebrow">Plan better. Celebrate bigger.</div>
+   <h1>Find the right people for your next event.</h1>
+   <p>Discover event planners, decorators, venues, caterers, photographers and more in your city.</p>
+   <form class="search" id="searchForm">
+    <input id="location" type="text" placeholder="Enter city, district, PIN code or country" required>
+    <select id="categorySelect" aria-label="Choose a category">
+      <option value="event planners">All event services</option>
+      <option value="wedding planners">Wedding planners</option>
+      <option value="birthday party planners">Birthday planners</option>
+      <option value="event decorators">Decorators</option>
+      <option value="caterers">Caterers</option>
+      <option value="event photographers">Photographers</option>
+      <option value="event venues and banquet halls">Venues & halls</option>
+      <option value="DJs and sound services">DJ & sound</option>
+      <option value="event videographers">Videographers</option>
+    </select>
+    <button type="submit">Search</button>
+   </form>
+  </div>
+ </div>
+</section>
+<section class="section" id="categories">
+ <div class="section-head"><div><h2>Explore services</h2><p class="sub">Choose a service and search in your preferred location.</p></div></div>
+ <div class="grid">
+  <button class="category" data-category="wedding planners"><div class="symbol">♡</div><strong>Wedding Planners</strong><small>Make your special day memorable</small></button>
+  <button class="category" data-category="birthday party planners"><div class="symbol">✦</div><strong>Birthday Planners</strong><small>Parties for every age</small></button>
+  <button class="category" data-category="event decorators"><div class="symbol">◇</div><strong>Decoration</strong><small>Beautiful event setups</small></button>
+  <button class="category" data-category="caterers"><div class="symbol">♨</div><strong>Catering</strong><small>Food and catering services</small></button>
+  <button class="category" data-category="event photographers"><div class="symbol">◎</div><strong>Photography</strong><small>Capture every moment</small></button>
+  <button class="category" data-category="event videographers"><div class="symbol">▷</div><strong>Videography</strong><small>Keep the memories alive</small></button>
+  <button class="category" data-category="event venues and banquet halls"><div class="symbol">⌂</div><strong>Venues & Halls</strong><small>Find a place for your event</small></button>
+  <button class="category" data-category="DJs and sound services"><div class="symbol">♫</div><strong>DJ, Sound & Light</strong><small>Bring energy to your event</small></button>
+ </div>
+</section>
+<section class="section" id="how">
+ <div class="info">
+  <div><h3>Search businesses near your location</h3><p>Enter a city, district, PIN code or country. EventManager opens a location-specific Google Maps search so you can view real listings, photos, public contact details and directions when available.</p></div>
+  <div><h3>How it works</h3><div class="steps">
+   <div class="step"><b>01</b><h3>Choose a service</h3><p>Select the event service you need.</p></div>
+   <div class="step"><b>02</b><h3>Enter location</h3><p>Search in your city or nearby area.</p></div>
+   <div class="step"><b>03</b><h3>Compare & contact</h3><p>Review available listings on Maps.</p></div>
+  </div></div>
+ </div>
+</section>
+<section class="section" id="about"><h2>About EventManager</h2><p class="sub">A simple starting point to discover event services. Google Maps listings are provided by Google; they are not verified or endorsed by EventManager.</p></section>
+</main>
+<footer><div class="brand">Event<span>Manager</span></div><p>Discover local event services. Plan with confidence.</p><p>© 2026 EventManager</p></footer>
+<script>
+const locationInput=document.getElementById('location');
+const categorySelect=document.getElementById('categorySelect');
+function searchMaps(){
+ const place=locationInput.value.trim();
+ if(!place){locationInput.focus();return;}
+ const category=categorySelect.value;
+ const query=encodeURIComponent(category+' near '+place);
+ window.open('https://www.google.com/maps/search/?api=1&query='+query,'_blank','noopener');
+}
+document.getElementById('searchForm').addEventListener('submit',function(e){e.preventDefault();searchMaps();});
+document.querySelectorAll('.category').forEach(function(card){
+ card.addEventListener('click',function(){
+  categorySelect.value=card.dataset.category;
+  locationInput.focus();
+  document.getElementById('searchForm').scrollIntoView({behavior:'smooth',block:'center'});
+ });
+});
+</script>
+</body>
+</html>
