@@ -1,59 +1,74 @@
 
-/* ==========================================
-   EVOKER — MINI WEB BROWSER
-   Premium Edition | External Search Only
-========================================== */
+"use strict";
+
+/* =========================================
+   EVOKER — FIXED PREMIUM VERSION
+   External Search | Guest | News | Images
+========================================= */
 
 const $ = id => document.getElementById(id);
 
-const KEY = {
+const STORAGE = {
   history: "evoker_history",
   bookmarks: "evoker_bookmarks",
+  downloads: "evoker_downloads",
   theme: "evoker_theme",
   engine: "evoker_engine",
-  guest: "evoker_guest_session"
+  homepage: "evoker_homepage",
+  guest: "evoker_guest"
 };
 
-const read = (key, fallback = []) => {
-  try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
-  } catch {
-    return fallback;
-  }
-};
-
-let historyData = read(KEY.history);
-let bookmarks = read(KEY.bookmarks);
-let tabs = [];
-let activeTab = 0;
-let currentNewsCategory = "all";
-
-const engines = {
+const ENGINES = {
   google: "https://www.google.com/search?q=",
   bing: "https://www.bing.com/search?q=",
   duckduckgo: "https://duckduckgo.com/?q="
 };
 
-const images = {
-  hero: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1400&auto=format&fit=crop",
-  news: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&auto=format&fit=crop",
-  technology: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&auto=format&fit=crop",
-  world: "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&auto=format&fit=crop",
-  sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&auto=format&fit=crop"
+const QUICK_LINKS = [
+  { name: "Google", url: "https://www.google.com", icon: "G" },
+  { name: "YouTube", url: "https://www.youtube.com", icon: "Y" },
+  { name: "Wikipedia", url: "https://www.wikipedia.org", icon: "W" },
+  { name: "GitHub", url: "https://github.com", icon: "GH" },
+  { name: "Bing", url: "https://www.bing.com", icon: "B" },
+  { name: "News", url: "https://news.google.com", icon: "N" }
+];
+
+const NEWS_IMAGES = {
+  all: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900",
+  india: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=900",
+  world: "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900",
+  technology: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900",
+  sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900",
+  business: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900"
 };
 
-function save(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+function readData(key, fallback = []) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value ?? fallback;
+  } catch {
+    return fallback;
+  }
 }
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
+let historyItems = readData(STORAGE.history);
+let bookmarks = readData(STORAGE.bookmarks);
+let downloads = readData(STORAGE.downloads);
+
+let tabs = [];
+let activeTab = 0;
+let currentPage = "home";
+let currentNewsCategory = "all";
+
+function saveData() {
+  localStorage.setItem(STORAGE.history, JSON.stringify(historyItems));
+  localStorage.setItem(STORAGE.bookmarks, JSON.stringify(bookmarks));
+  localStorage.setItem(STORAGE.downloads, JSON.stringify(downloads));
+}
+
+function setStatus(message) {
+  const status = $("connectionStatus");
+  if (status) status.textContent = message;
 }
 
 function safeURL(value) {
@@ -66,381 +81,227 @@ function safeURL(value) {
   return "";
 }
 
-/* ==========================================
-   PREMIUM DESIGN
-========================================== */
+/* =========================================
+   PREMIUM VISUAL IMPROVEMENTS
+========================================= */
 
-function installPremiumDesign() {
-  if ($("evokerPremiumStyles")) return;
+function addPremiumStyles() {
+  if ($("evokerExtraCSS")) return;
 
   const style = document.createElement("style");
-  style.id = "evokerPremiumStyles";
+  style.id = "evokerExtraCSS";
 
   style.textContent = `
-    :root {
-      --ev-bg:#f3f7fa;
-      --ev-card:#ffffff;
-      --ev-text:#142b40;
-      --ev-muted:#718397;
-      --ev-navy:#10283f;
-      --ev-blue:#1677bd;
-      --ev-teal:#12a99b;
-      --ev-border:#e2eaf0;
-      --ev-shadow:0 12px 35px rgba(20,48,70,.08);
-    }
-
-    body {
-      background:var(--ev-bg);
-      color:var(--ev-text);
-      font-family:'DM Sans',Arial,sans-serif;
-    }
-
-    body.dark-mode {
-      --ev-bg:#091724;
-      --ev-card:#12283a;
-      --ev-text:#edf6fb;
-      --ev-muted:#a2b5c4;
-      --ev-border:#294153;
-      --ev-shadow:0 12px 35px rgba(0,0,0,.2);
-    }
-
-    .browser-header,.browser-tabs,.browser-nav {
-      border-color:var(--ev-border)!important;
-    }
-
-    .content-page {
-      color:var(--ev-text);
-    }
-
-    .evoker-hero {
-      position:relative;
-      min-height:250px;
-      padding:38px 25px;
-      border-radius:24px;
-      overflow:hidden;
-      color:white;
+    .hero-section {
       background:
-        linear-gradient(100deg,rgba(8,29,49,.94),rgba(13,76,101,.68)),
-        url('${images.hero}') center/cover;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      margin:20px 0;
-      box-shadow:var(--ev-shadow);
+        linear-gradient(100deg,rgba(10,28,45,.96),rgba(10,65,83,.66)),
+        url("https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1400")
+        center/cover !important;
     }
 
-    .evoker-hero h1 {
-      font-size:clamp(30px,5vw,48px);
-      margin:0 0 10px;
-      font-weight:800;
-      letter-spacing:-1.5px;
+    .hero-section,
+    .quick-link,
+    .preview-card,
+    .discover-card,
+    .news-card,
+    .guest-card {
+      transition:all .25s ease;
     }
 
-    .evoker-hero p {
-      color:#d9edf4;
-      max-width:550px;
-      line-height:1.7;
-    }
-
-    .evoker-tag {
-      display:inline-block;
-      color:#8ff5df;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:2px;
-      margin-bottom:12px;
-    }
-
-    .evoker-section-title {
-      font-size:21px;
-      font-weight:800;
-      margin:28px 0 15px;
-    }
-
-    .evoker-quick-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(125px,1fr));
-      gap:13px;
-      margin:20px 0;
-    }
-
-    .evoker-quick {
-      border:1px solid var(--ev-border);
-      background:var(--ev-card);
-      color:var(--ev-text);
-      border-radius:17px;
-      padding:18px 12px;
-      cursor:pointer;
-      text-align:left;
-      transition:.2s;
-      box-shadow:var(--ev-shadow);
-    }
-
-    .evoker-quick:hover {
+    .quick-link:hover,
+    .preview-card:hover,
+    .discover-card:hover {
       transform:translateY(-4px);
-      border-color:var(--ev-teal);
+      border-color:var(--teal);
+      box-shadow:var(--shadow);
     }
 
-    .evoker-quick-icon {
+    .shortcut-icon {
       width:38px;
       height:38px;
       display:grid;
       place-items:center;
       border-radius:12px;
-      background:#e5f7f5;
-      color:#087f79;
-      margin-bottom:12px;
-      font-size:18px;
-    }
-
-    .dark-mode .evoker-quick-icon {
-      background:#194c50;
-      color:#8af2dc;
-    }
-
-    .evoker-quick strong {
-      display:block;
+      background:linear-gradient(135deg,#d9f8f1,#dceeff);
+      color:#087e80;
+      font-weight:800;
       font-size:14px;
     }
 
-    .evoker-quick small {
-      display:block;
-      color:var(--ev-muted);
-      margin-top:5px;
+    body.dark .shortcut-icon {
+      background:#214b57;
+      color:#a1f1df;
     }
 
     .news-card {
+      padding:0 !important;
       overflow:hidden;
-      background:var(--ev-card);
-      border:1px solid var(--ev-border);
-      border-radius:17px;
-      margin:15px 0;
-      box-shadow:var(--ev-shadow);
     }
 
     .news-card img {
-      width:100%;
-      height:190px;
-      object-fit:cover;
       display:block;
+      width:100%;
+      height:175px;
+      object-fit:cover;
+      background:var(--surface-2);
     }
 
-    .news-card-content {
+    .news-card .news-content {
       padding:17px;
     }
 
     .news-card h3 {
-      font-size:17px;
       line-height:1.5;
-      margin:0 0 9px;
+      overflow-wrap:anywhere;
     }
 
-    .news-card p {
-      color:var(--ev-muted);
-      font-size:13px;
+    .news-card .news-source {
+      color:var(--muted);
+      font-size:12px;
+      margin:8px 0 12px;
     }
 
-    .news-card a,.search-engine-link {
-      color:var(--ev-teal);
-      font-weight:700;
+    .news-card a {
+      display:inline-block;
+      color:var(--teal);
       text-decoration:none;
+      font-weight:700;
+      padding-bottom:4px;
     }
 
     .news-card a:hover {
       text-decoration:underline;
     }
 
-    .evoker-news-fallback {
-      padding:25px;
-      background:var(--ev-card);
-      border:1px solid var(--ev-border);
-      border-radius:18px;
-      line-height:1.7;
-    }
-
-    .evoker-news-fallback a {
-      color:var(--ev-teal);
-      font-weight:700;
-    }
-
     .evoker-empty {
+      padding:25px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:15px;
+      color:var(--muted);
       text-align:center;
-      padding:35px 15px;
-      color:var(--ev-muted);
-      background:var(--ev-card);
-      border-radius:17px;
+      grid-column:1/-1;
     }
 
-    .evoker-guest-overlay {
-      position:fixed;
-      inset:0;
-      z-index:99999;
-      background:rgba(5,19,32,.88);
-      display:grid;
-      place-items:center;
-      padding:20px;
-      backdrop-filter:blur(12px);
-    }
-
-    .evoker-guest-box {
-      max-width:420px;
-      width:100%;
-      padding:32px;
-      text-align:center;
-      background:#122d43;
-      color:white;
-      border:1px solid #31546a;
-      border-radius:24px;
-      box-shadow:0 25px 90px rgba(0,0,0,.4);
-    }
-
-    .evoker-guest-logo {
-      width:68px;
-      height:68px;
-      display:grid;
-      place-items:center;
-      margin:0 auto 18px;
-      background:linear-gradient(135deg,#12b5a4,#1677bd);
-      border-radius:21px;
-      font-size:27px;
-      font-weight:900;
-    }
-
-    .evoker-guest-box h2 {
-      margin:0 0 10px;
-      font-size:27px;
-    }
-
-    .evoker-guest-box p {
-      color:#c2d6e4;
-      line-height:1.7;
-    }
-
-    .evoker-primary {
-      display:inline-block;
-      border:0;
-      border-radius:12px;
-      padding:13px 22px;
-      background:linear-gradient(110deg,#13aa9e,#1677bd);
-      color:white;
-      font-weight:800;
-      cursor:pointer;
-      margin-top:14px;
-    }
-
-    .evoker-secondary {
-      background:var(--ev-card);
-      border:1px solid var(--ev-border);
-      color:var(--ev-text);
-      border-radius:12px;
-      padding:11px 16px;
-      cursor:pointer;
-    }
-
-    .evoker-search-tip {
-      color:var(--ev-muted);
-      font-size:13px;
-      margin:10px 0;
-    }
-
-    .evoker-external-note {
-      padding:20px;
-      border-radius:16px;
-      background:var(--ev-card);
-      border:1px solid var(--ev-border);
-      line-height:1.7;
-    }
-
-    .evoker-search-buttons {
+    .evoker-news-actions {
       display:flex;
+      gap:12px;
       flex-wrap:wrap;
-      gap:10px;
       margin-top:15px;
     }
 
-    .evoker-search-buttons button {
-      border:1px solid var(--ev-border);
-      background:var(--ev-card);
-      color:var(--ev-text);
-      padding:11px 16px;
-      border-radius:12px;
-      cursor:pointer;
+    .evoker-news-actions a {
+      color:var(--teal);
+      font-weight:700;
     }
 
-    .evoker-search-buttons button:hover {
-      border-color:var(--ev-teal);
+    .evoker-external-label {
+      display:inline-block;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
     }
 
-    @media(max-width:600px) {
-      .evoker-hero {
-        min-height:220px;
-        padding:25px 18px;
-      }
-
-      .news-card img {
-        height:155px;
-      }
+    @media(max-width:700px) {
+      .news-card img { height:155px; }
     }
   `;
 
   document.head.appendChild(style);
 }
 
-/* ==========================================
-   GUEST MODE
-========================================== */
+/* =========================================
+   URL + EXTERNAL SEARCH
+========================================= */
 
-function showGuestWelcome() {
-  if (sessionStorage.getItem(KEY.guest) === "true") return;
+function isWebsite(value) {
+  return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+)([/?#][^\s]*)?$/i.test(value);
+}
 
-  let overlay = $("evokerGuestOverlay");
+function normalizeURL(value) {
+  let url = value.trim();
 
-  if (!overlay) {
-    overlay = document.createElement("div");
-    overlay.id = "evokerGuestOverlay";
-    overlay.className = "evoker-guest-overlay";
-
-    overlay.innerHTML = `
-      <div class="evoker-guest-box">
-        <div class="evoker-guest-logo">E</div>
-        <h2>Welcome to EVOKER</h2>
-        <p>Your simple space to explore the web, discover news
-        and access your favourite websites.</p>
-        <button class="evoker-primary" id="evokerStartGuest">
-          Continue as Guest
-        </button>
-        <p style="font-size:11px;margin-top:16px">
-          No account required
-        </p>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
+  if (!/^https?:\/\//i.test(url)) {
+    url = "https://" + url;
   }
 
-  $("evokerStartGuest").onclick = continueAsGuest;
+  return safeURL(url);
 }
 
-function continueAsGuest() {
-  sessionStorage.setItem(KEY.guest, "true");
-  $("evokerGuestOverlay")?.remove();
-  showPage("home");
+function getSearchEngine() {
+  const saved = localStorage.getItem(STORAGE.engine);
+  return ENGINES[saved] ? saved : "google";
 }
 
-/* ==========================================
+function makeSearchURL(query) {
+  const engine = getSearchEngine();
+  return ENGINES[engine] + encodeURIComponent(query.trim());
+}
+
+function addHistory(title, url) {
+  historyItems.unshift({
+    title,
+    url,
+    time: new Date().toLocaleString()
+  });
+
+  historyItems = historyItems.slice(0, 300);
+  saveData();
+}
+
+function openExternalURL(url, title = "") {
+  const safe = safeURL(url);
+
+  if (!safe) {
+    setStatus("Invalid website address.");
+    return;
+  }
+
+  const tab = tabs[activeTab];
+
+  if (tab) {
+    tab.url = safe;
+    tab.title = title || new URL(safe).hostname;
+  }
+
+  renderTabs();
+
+  window.open(safe, "_blank", "noopener,noreferrer");
+
+  addHistory(title || safe, safe);
+  setStatus("Opened in external browser.");
+}
+
+function navigate(value) {
+  const text = value.trim();
+
+  if (!text) return;
+
+  if (isWebsite(text)) {
+    openExternalURL(normalizeURL(text));
+  } else {
+    openExternalURL(makeSearchURL(text), "Search: " + text);
+  }
+}
+
+/* =========================================
    TABS
-========================================== */
+========================================= */
 
 function createTab() {
   tabs.push({
-    id: Date.now(),
-    title: "New Tab",
-    url: ""
+    id: Date.now() + Math.random(),
+    url: "",
+    title: "New Tab"
   });
 
   activeTab = tabs.length - 1;
   renderTabs();
   showPage("home");
+}
+
+function getActiveTab() {
+  return tabs[activeTab];
 }
 
 function renderTabs() {
@@ -453,8 +314,20 @@ function renderTabs() {
     const button = document.createElement("button");
     button.className =
       "browser-tab" + (index === activeTab ? " active" : "");
-    button.textContent = tab.title;
-    button.title = tab.title;
+
+    const label = document.createElement("span");
+    label.textContent = tab.title;
+
+    const close = document.createElement("span");
+    close.textContent = " ×";
+    close.title = "Close tab";
+
+    close.onclick = event => {
+      event.stopPropagation();
+      closeTab(index);
+    };
+
+    button.append(label, close);
 
     button.onclick = () => {
       activeTab = index;
@@ -466,446 +339,547 @@ function renderTabs() {
   });
 }
 
-/* ==========================================
-   EXTERNAL SEARCH ONLY
-========================================== */
-
-function normalizeUrl(value) {
-  value = value.trim();
-
-  if (/^https?:\/\//i.test(value)) return value;
-
-  if (/^[\w-]+(\.[\w-]+)+([/?#].*)?$/i.test(value)) {
-    return "https://" + value;
-  }
-
-  return "";
-}
-
-function getSearchEngine() {
-  return (
-    localStorage.getItem(KEY.engine) ||
-    $("searchEngineSelect")?.value ||
-    "google"
-  );
-}
-
-function externalSearch(query) {
-  query = query.trim();
-  if (!query) return;
-
-  const engine = getSearchEngine();
-  const base = engines[engine] || engines.google;
-
-  const url = base + encodeURIComponent(query);
-  window.open(url, "_blank", "noopener");
-
-  addHistory(query, url);
-}
-
-function handleSearch(value) {
-  value = value.trim();
-  if (!value) return;
-
-  const url = normalizeUrl(value);
-
-  if (url) {
-    window.open(url, "_blank", "noopener");
-    addHistory(value, url);
+function closeTab(index) {
+  if (tabs.length === 1) {
+    tabs[0] = { id: Date.now(), url: "", title: "New Tab" };
+    activeTab = 0;
   } else {
-    externalSearch(value);
+    tabs.splice(index, 1);
+    activeTab = Math.min(activeTab, tabs.length - 1);
   }
+
+  renderTabs();
+  showPage("home");
 }
 
-/* ==========================================
-   HISTORY
-========================================== */
+function newTab() {
+  createTab();
+}
 
-function addHistory(title, url) {
-  historyData.unshift({
-    title,
-    url,
-    date: new Date().toLocaleString()
+/* =========================================
+   PAGE NAVIGATION
+========================================= */
+
+function showPage(page) {
+  const allowed = [
+    "home", "website", "discover", "news",
+    "bookmarks", "history", "downloads", "settings"
+  ];
+
+  if (!allowed.includes(page)) return;
+
+  currentPage = page;
+
+  document.querySelectorAll(".content-page").forEach(element => {
+    element.classList.add("hidden");
   });
 
-  historyData = historyData.slice(0, 100);
-  save(KEY.history, historyData);
+  $(page + "Page")?.classList.remove("hidden");
+  $("browserMenu")?.classList.add("hidden");
+
+  if (page === "bookmarks") renderBookmarks();
+  if (page === "history") renderHistory();
+  if (page === "downloads") renderDownloads();
+  if (page === "news") loadNews(currentNewsCategory);
 }
+
+function goHome() {
+  const tab = getActiveTab();
+
+  if (tab) {
+    tab.url = "";
+    tab.title = "New Tab";
+  }
+
+  if ($("addressInput")) $("addressInput").value = "";
+
+  renderTabs();
+  showPage("home");
+  setStatus("EVOKER is ready.");
+}
+
+/* =========================================
+   GUEST MODE
+========================================= */
+
+function openGuestPanel() {
+  $("guestPanel")?.classList.remove("hidden");
+}
+
+function closeGuestPanel() {
+  $("guestPanel")?.classList.add("hidden");
+}
+
+function continueAsGuest() {
+  localStorage.setItem(STORAGE.guest, "true");
+
+  if ($("profileLabel")) {
+    $("profileLabel").textContent = "Guest";
+  }
+
+  closeGuestPanel();
+  setStatus("Browsing as Guest");
+
+  const homepage = localStorage.getItem(STORAGE.homepage) || "home";
+  showPage(homepage);
+}
+
+function exitGuestMode() {
+  if (!confirm("End this Guest session?")) return;
+
+  localStorage.removeItem(STORAGE.guest);
+  openGuestPanel();
+}
+
+/* =========================================
+   QUICK LINKS
+========================================= */
+
+function renderQuickLinks() {
+  const container = $("quickLinksContainer");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  QUICK_LINKS.forEach(item => {
+    const button = document.createElement("button");
+    button.className = "quick-link";
+
+    const icon = document.createElement("span");
+    icon.className = "shortcut-icon";
+    icon.textContent = item.icon;
+
+    const label = document.createElement("span");
+    label.textContent = item.name;
+
+    button.append(icon, label);
+    button.onclick = () => openExternalURL(item.url, item.name);
+
+    container.appendChild(button);
+  });
+}
+
+/* =========================================
+   HISTORY
+========================================= */
 
 function renderHistory() {
   const container = $("historyContainer");
   if (!container) return;
 
-  if (!historyData.length) {
-    container.innerHTML =
-      '<div class="evoker-empty">No browsing history yet.</div>';
+  container.innerHTML = "";
+
+  if (!historyItems.length) {
+    container.textContent = "Your browsing history is empty.";
     return;
   }
 
-  container.innerHTML = historyData.map(item => `
-    <div class="saved-item">
-      <div>
-        <strong>${escapeHTML(item.title)}</strong>
-        <small>${escapeHTML(item.date || "")}</small>
-      </div>
-      <a href="${escapeHTML(safeURL(item.url))}"
-         target="_blank" rel="noopener">Open</a>
-    </div>
-  `).join("");
+  historyItems.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "saved-item";
+
+    const info = document.createElement("div");
+    const link = document.createElement("button");
+
+    link.textContent = item.title || item.url;
+    link.onclick = () => openExternalURL(item.url, item.title);
+
+    const time = document.createElement("small");
+    time.textContent = item.time || "";
+
+    info.append(link, document.createElement("br"), time);
+
+    const remove = document.createElement("button");
+    remove.textContent = "Remove";
+
+    remove.onclick = () => {
+      historyItems.splice(index, 1);
+      saveData();
+      renderHistory();
+    };
+
+    row.append(info, remove);
+    container.appendChild(row);
+  });
 }
 
-/* ==========================================
+/* =========================================
    BOOKMARKS
-========================================== */
+========================================= */
 
 function addBookmark() {
-  const tab = tabs[activeTab];
+  const tab = getActiveTab();
 
-  if (!tab || !tab.url) {
-    alert("Open a website first.");
+  if (!tab?.url) {
+    setStatus("Open a website first.");
     return;
   }
 
   if (bookmarks.some(item => item.url === tab.url)) {
-    alert("This bookmark already exists.");
+    setStatus("Already bookmarked.");
     return;
   }
 
   bookmarks.unshift({
-    title: tab.title,
     url: tab.url,
-    date: new Date().toLocaleDateString()
+    title: tab.title,
+    time: new Date().toLocaleDateString()
   });
 
-  save(KEY.bookmarks, bookmarks);
-  alert("Bookmark saved!");
+  saveData();
+  setStatus("Bookmark saved.");
 }
 
 function renderBookmarks() {
   const container = $("bookmarksContainer");
   if (!container) return;
 
+  container.innerHTML = "";
+
   if (!bookmarks.length) {
-    container.innerHTML =
-      '<div class="evoker-empty">No bookmarks saved yet.</div>';
+    container.textContent = "No bookmarks saved yet.";
     return;
   }
 
-  container.innerHTML = bookmarks.map((item, index) => `
-    <div class="saved-item">
-      <div>
-        <strong>${escapeHTML(item.title)}</strong>
-        <small>${escapeHTML(item.url)}</small>
-      </div>
-      <div>
-        <a href="${escapeHTML(safeURL(item.url))}"
-           target="_blank" rel="noopener">Open</a>
-        <button data-remove-bookmark="${index}">Delete</button>
-      </div>
-    </div>
-  `).join("");
+  bookmarks.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "saved-item";
 
-  container.querySelectorAll("[data-remove-bookmark]").forEach(button => {
-    button.onclick = () => {
-      bookmarks.splice(Number(button.dataset.removeBookmark), 1);
-      save(KEY.bookmarks, bookmarks);
+    const link = document.createElement("button");
+    link.textContent = item.title || item.url;
+    link.onclick = () => openExternalURL(item.url, item.title);
+
+    const remove = document.createElement("button");
+    remove.textContent = "Remove";
+
+    remove.onclick = () => {
+      bookmarks.splice(index, 1);
+      saveData();
       renderBookmarks();
     };
+
+    row.append(link, remove);
+    container.appendChild(row);
   });
 }
 
-/* ==========================================
-   NEWS
-========================================== */
+/* =========================================
+   NEWS EXPLORER
+========================================= */
 
-async function loadNews(category = currentNewsCategory) {
+const NEWS_QUERIES = {
+  all: "India OR world",
+  india: "India",
+  world: "world news",
+  technology: "technology",
+  sports: "sports",
+  business: "business"
+};
+
+async function loadNews(category = "all") {
   currentNewsCategory = category;
 
   const container = $("newsContainer");
   if (!container) return;
 
-  container.innerHTML = `
-    <div class="evoker-empty">
-      Loading latest news...
-    </div>
-  `;
+  container.innerHTML =
+    '<div class="evoker-empty">Loading latest news...</div>';
 
-  const queries = {
-    all: "India OR world",
-    india: "India",
-    world: "world news",
-    technology: "technology",
-    sports: "sports",
-    business: "business"
-  };
-
-  const query = queries[category] || queries.all;
+  const query = encodeURIComponent(NEWS_QUERIES[category] || "India");
 
   const api =
-    "https://api.gdeltproject.org/api/v2/doc/doc?query=" +
-    encodeURIComponent(query) +
+    "https://api.gdeltproject.org/api/v2/doc/doc" +
+    "?query=" + query +
     "&mode=ArtList&format=json&maxrecords=15&sort=DateDesc";
 
   try {
-    const response = await fetch(api);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
 
-    if (!response.ok) throw new Error("News API error");
+    const response = await fetch(api, {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) throw new Error("News source unavailable");
 
     const data = await response.json();
     const articles = data.articles || [];
 
-    if (!articles.length) throw new Error("No news available");
+    if (!articles.length) throw new Error("No articles found");
 
-    container.innerHTML = articles.map(article => {
+    container.innerHTML = "";
+
+    articles.forEach(article => {
       const url = safeURL(article.url);
-      const image = safeURL(article.socialimage) || images.news;
+      if (!url) return;
 
-      if (!url) return "";
+      const card = document.createElement("article");
+      card.className = "news-card";
 
-      return `
-        <article class="news-card">
-          <img
-            src="${escapeHTML(image)}"
-            alt="News image"
-            loading="lazy"
-            onerror="this.src='${images.news}'"
-          >
-          <div class="news-card-content">
-            <p>${escapeHTML(article.domain || "Latest News")}</p>
-            <h3>${escapeHTML(article.title || "News Update")}</h3>
-            <p>${escapeHTML(article.seendate || "")}</p>
-            <a href="${escapeHTML(url)}"
-               target="_blank" rel="noopener">
-              Read Full Story →
-            </a>
-          </div>
-        </article>
-      `;
-    }).join("");
+      const image = document.createElement("img");
+      image.src = safeURL(article.socialimage) ||
+        NEWS_IMAGES[category] || NEWS_IMAGES.all;
+      image.alt = "News image";
+      image.loading = "lazy";
+      image.onerror = () => {
+        image.onerror = null;
+        image.src = NEWS_IMAGES[category] || NEWS_IMAGES.all;
+      };
 
-    if (!container.innerHTML.trim()) {
+      const content = document.createElement("div");
+      content.className = "news-content";
+
+      const title = document.createElement("h3");
+      title.textContent = article.title || "Latest News";
+
+      const source = document.createElement("p");
+      source.className = "news-source";
+      source.textContent =
+        (article.domain || "News source") +
+        (article.seendate ? " • " + article.seendate : "");
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Read Full Story →";
+
+      content.append(title, source, link);
+      card.append(image, content);
+      container.appendChild(card);
+    });
+
+    if (!container.children.length) {
       throw new Error("No valid articles");
     }
 
+    setStatus("Latest news loaded.");
+
   } catch (error) {
     container.innerHTML = `
-      <div class="evoker-news-fallback">
+      <div class="evoker-empty">
         <h3>News is temporarily unavailable</h3>
-        <p>Our news source could not load right now.
-        You can still read the latest headlines from Google News.</p>
-        <a href="https://news.google.com/"
-           target="_blank" rel="noopener">
-          Explore Latest News →
-        </a>
-        <br><br>
-        <button class="evoker-secondary" id="retryNews">
-          Try Again
-        </button>
+        <p>Try again or explore headlines from Google News.</p>
+        <div class="evoker-news-actions">
+          <button class="secondary-button" id="retryNewsButton">
+            Try Again
+          </button>
+          <a href="https://news.google.com/"
+             target="_blank" rel="noopener">
+            Open Google News
+          </a>
+        </div>
       </div>
     `;
 
-    $("retryNews").onclick = () => loadNews(category);
+    $("retryNewsButton").onclick = () => loadNews(category);
+    setStatus("News source unavailable.");
   }
 }
 
-/* ==========================================
-   HOME DESIGN
-========================================== */
+/* =========================================
+   DOWNLOADS
+========================================= */
 
-function buildHomeDesign() {
-  const home = $("homePage");
-  if (!home || $("evokerHomeDecoration")) return;
+function renderDownloads() {
+  const container = $("downloadsContainer");
+  if (!container) return;
 
-  const section = document.createElement("section");
-  section.id = "evokerHomeDecoration";
+  container.innerHTML = "";
 
-  section.innerHTML = `
-    <div class="evoker-hero">
-      <span class="evoker-tag">EXPLORE WITHOUT LIMITS</span>
-      <h1>Discover More.<br>Explore Better.</h1>
-      <p>One place to search the web, discover news
-      and reach your favourite destinations.</p>
-    </div>
+  if (!downloads.length) {
+    container.textContent =
+      "Downloads are managed by your device browser.";
+    return;
+  }
 
-    <h2 class="evoker-section-title">Explore the Web</h2>
-
-    <div class="evoker-quick-grid">
-      <button class="evoker-quick" data-evoker-search="web">
-        <span class="evoker-quick-icon">W</span>
-        <strong>Web Search</strong>
-        <small>Explore websites</small>
-      </button>
-
-      <button class="evoker-quick" data-evoker-search="images">
-        <span class="evoker-quick-icon">I</span>
-        <strong>Images</strong>
-        <small>Discover pictures</small>
-      </button>
-
-      <button class="evoker-quick" data-evoker-search="videos">
-        <span class="evoker-quick-icon">V</span>
-        <strong>Videos</strong>
-        <small>Watch online</small>
-      </button>
-
-      <button class="evoker-quick" data-evoker-search="news">
-        <span class="evoker-quick-icon">N</span>
-        <strong>News</strong>
-        <small>Latest headlines</small>
-      </button>
-
-      <button class="evoker-quick" data-evoker-search="shopping">
-        <span class="evoker-quick-icon">S</span>
-        <strong>Shopping</strong>
-        <small>Find products</small>
-      </button>
-
-      <button class="evoker-quick" data-evoker-search="maps">
-        <span class="evoker-quick-icon">M</span>
-        <strong>Maps</strong>
-        <small>Explore places</small>
-      </button>
-    </div>
-
-    <p class="evoker-search-tip">
-      Search opens in your device's external browser.
-    </p>
-  `;
-
-  home.appendChild(section);
-
-  section.querySelectorAll("[data-evoker-search]").forEach(button => {
-    button.onclick = () => {
-      const type = button.dataset.evokerSearch;
-
-      const searches = {
-        web: "popular websites",
-        images: "https://www.google.com/imghp",
-        videos: "https://www.youtube.com",
-        news: "https://news.google.com",
-        shopping: "online shopping",
-        maps: "https://www.google.com/maps"
-      };
-
-      handleSearch(searches[type]);
-    };
+  downloads.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "saved-item";
+    row.textContent = item;
+    container.appendChild(row);
   });
 }
 
-/* ==========================================
-   WEBSITE PAGE
-========================================== */
-
-function setupWebsitePage() {
-  const page = $("websitePage");
-  if (!page || $("evokerExternalMessage")) return;
-
-  const note = document.createElement("div");
-  note.id = "evokerExternalMessage";
-  note.className = "evoker-external-note";
-
-  note.innerHTML = `
-    <h2>External Browser</h2>
-    <p>EVOKER opens websites in your device's browser.
-    Some websites do not allow embedded viewing.</p>
-    <p>Use the address bar above to search or open a website.</p>
-  `;
-
-  page.appendChild(note);
-}
-
-/* ==========================================
-   PAGE NAVIGATION
-========================================== */
-
-function showPage(name) {
-  document.querySelectorAll(".content-page").forEach(page => {
-    page.classList.add("hidden");
-  });
-
-  const page = $(name + "Page");
-  if (page) page.classList.remove("hidden");
-
-  if (name === "history") renderHistory();
-  if (name === "bookmarks") renderBookmarks();
-  if (name === "news") loadNews();
-}
-
-/* ==========================================
+/* =========================================
    THEME
-========================================== */
+========================================= */
 
 function applyTheme(theme) {
-  document.body.classList.toggle("dark-mode", theme === "dark");
-  localStorage.setItem(KEY.theme, theme);
+  const dark = theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  document.body.classList.toggle("dark", dark);
+  localStorage.setItem(STORAGE.theme, theme);
 
   if ($("appearanceSelect")) {
     $("appearanceSelect").value = theme;
   }
 }
 
-/* ==========================================
-   EVENT LISTENERS
-========================================== */
+/* =========================================
+   ADDRESS SUGGESTIONS
+========================================= */
+
+function setupSuggestions() {
+  const input = $("addressInput");
+  const box = $("suggestionsBox");
+  const list = $("suggestionsList");
+
+  if (!input || !box || !list) return;
+
+  input.addEventListener("input", () => {
+    const value = input.value.trim();
+    list.innerHTML = "";
+
+    if (!value) {
+      box.classList.add("hidden");
+      return;
+    }
+
+    const options = [
+      "Search " + value,
+      "Images of " + value,
+      "Videos of " + value
+    ];
+
+    options.forEach(text => {
+      const button = document.createElement("button");
+      button.textContent = text;
+
+      button.onclick = () => {
+        input.value = text;
+        box.classList.add("hidden");
+        navigate(text);
+      };
+
+      list.appendChild(button);
+    });
+
+    box.classList.remove("hidden");
+  });
+}
+
+/* =========================================
+   ALL EVENT LISTENERS
+========================================= */
 
 function initializeEvoker() {
-  installPremiumDesign();
-  buildHomeDesign();
-  setupWebsitePage();
+  addPremiumStyles();
 
-  if (!tabs.length) createTab();
-
-  applyTheme(localStorage.getItem(KEY.theme) || "light");
-
-  showGuestWelcome();
-
-  $("continueGuestButton")?.addEventListener("click", continueAsGuest);
-  $("closeGuestButton")?.addEventListener("click", continueAsGuest);
-  $("guestMenuButton")?.addEventListener("click", showGuestWelcome);
-
-  $("newTabButton")?.addEventListener("click", createTab);
-
-  $("homeButton")?.addEventListener("click", () => showPage("home"));
-
-  $("backButton")?.addEventListener("click", () => {
-    alert("External browser controls its own back navigation.");
+  // Search bar: external only
+  $("searchForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    navigate($("addressInput").value);
+    $("suggestionsBox")?.classList.add("hidden");
   });
 
-  $("forwardButton")?.addEventListener("click", () => {
-    alert("External browser controls its own forward navigation.");
+  $("homeSearchForm")?.addEventListener("submit", event => {
+    event.preventDefault();
+    navigate($("homeSearchInput").value);
+  });
+
+  // Browser buttons
+  $("newTabButton")?.addEventListener("click", newTab);
+  $("homeButton")?.addEventListener("click", goHome);
+  $("bookmarkButton")?.addEventListener("click", addBookmark);
+
+  $("openExternalButton")?.addEventListener("click", () => {
+    const tab = getActiveTab();
+    if (tab?.url) {
+      window.open(tab.url, "_blank", "noopener,noreferrer");
+    }
   });
 
   $("reloadButton")?.addEventListener("click", () => {
-    if (tabs[activeTab]?.url) {
-      window.open(tabs[activeTab].url, "_blank", "noopener");
+    const tab = getActiveTab();
+    if (tab?.url) {
+      window.open(tab.url, "_blank", "noopener,noreferrer");
     } else {
       location.reload();
     }
   });
 
-  $("searchForm")?.addEventListener("submit", event => {
-    event.preventDefault();
-    handleSearch($("addressInput")?.value || "");
+  $("backButton")?.addEventListener("click", () => {
+    setStatus("Use Back in your external browser.");
   });
 
-  $("homeSearchForm")?.addEventListener("submit", event => {
-    event.preventDefault();
-    handleSearch($("homeSearchInput")?.value || "");
+  $("forwardButton")?.addEventListener("click", () => {
+    setStatus("Use Forward in your external browser.");
   });
 
-  $("address-search-button")?.addEventListener("click", () => {
-    handleSearch($("addressInput")?.value || "");
+  $("clearAddressButton")?.addEventListener("click", () => {
+    $("addressInput").value = "";
+    $("addressInput").focus();
   });
 
-  $("openExternalButton")?.addEventListener("click", () => {
-    const url = tabs[activeTab]?.url;
-    if (url) window.open(url, "_blank", "noopener");
+  // Guest Mode
+  $("profileButton")?.addEventListener("click", openGuestPanel);
+  $("guestMenuButton")?.addEventListener("click", openGuestPanel);
+  $("continueGuestButton")?.addEventListener("click", continueAsGuest);
+
+  // Closing the welcome panel also continues as Guest
+  $("closeGuestButton")?.addEventListener("click", continueAsGuest);
+
+  // Menu
+  $("menuButton")?.addEventListener("click", () => {
+    $("browserMenu")?.classList.toggle("hidden");
   });
 
-  $("bookmarkButton")?.addEventListener("click", addBookmark);
+  $("settingsButton")?.addEventListener("click", () => {
+    showPage("settings");
+  });
 
+  document.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => {
+      showPage(button.dataset.page);
+    });
+  });
+
+  // Discover categories open external destinations/search
+  const discoverSearches = {
+    web: "web search",
+    images: "images",
+    videos: "videos",
+    news: "latest news",
+    shopping: "shopping",
+    maps: "maps"
+  };
+
+  document.querySelectorAll(".discover-card, .preview-card").forEach(button => {
+    button.addEventListener("click", () => {
+      const type = button.dataset.search;
+
+      if (type === "news") {
+        showPage("news");
+        return;
+      }
+
+      navigate(discoverSearches[type] || type);
+    });
+  });
+
+  // Search engine
+  $("settingsSearchEngine")?.addEventListener("change", event => {
+    localStorage.setItem(STORAGE.engine, event.target.value);
+    if ($("searchEngineSelect")) {
+      $("searchEngineSelect").value = event.target.value;
+    }
+  });
+
+  $("searchEngineSelect")?.addEventListener("change", event => {
+    localStorage.setItem(STORAGE.engine, event.target.value);
+    if ($("settingsSearchEngine")) {
+      $("settingsSearchEngine").value = event.target.value;
+    }
+  });
+
+  // Theme
   $("themeToggle")?.addEventListener("click", () => {
-    const dark = document.body.classList.contains("dark-mode");
+    const dark = document.body.classList.contains("dark");
     applyTheme(dark ? "light" : "dark");
   });
 
@@ -913,74 +887,92 @@ function initializeEvoker() {
     applyTheme(event.target.value);
   });
 
-  $("searchEngineSelect")?.addEventListener("change", event => {
-    localStorage.setItem(KEY.engine, event.target.value);
-    if ($("settingsSearchEngine")) {
-      $("settingsSearchEngine").value = event.target.value;
-    }
+  // Homepage
+  $("homepageSelect")?.addEventListener("change", event => {
+    localStorage.setItem(STORAGE.homepage, event.target.value);
   });
 
-  $("settingsSearchEngine")?.addEventListener("change", event => {
-    localStorage.setItem(KEY.engine, event.target.value);
-    if ($("searchEngineSelect")) {
-      $("searchEngineSelect").value = event.target.value;
-    }
-  });
-
+  // News
   $("refreshNewsButton")?.addEventListener("click", () => {
     loadNews(currentNewsCategory);
   });
 
   document.querySelectorAll(".news-filter").forEach(button => {
     button.addEventListener("click", () => {
+      document.querySelectorAll(".news-filter").forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
       loadNews(button.dataset.category || "all");
     });
   });
 
-  document.querySelectorAll("[data-page]").forEach(button => {
-    button.addEventListener("click", () => {
-      showPage(button.dataset.page);
-      $("browserMenu")?.classList.add("hidden");
-    });
-  });
-
-  $("menuButton")?.addEventListener("click", () => {
-    $("browserMenu")?.classList.toggle("hidden");
-  });
-
-  $("clearAddressButton")?.addEventListener("click", () => {
-    if ($("addressInput")) $("addressInput").value = "";
-  });
-
+  // History
   $("clearHistoryButton")?.addEventListener("click", () => {
-    if (confirm("Clear all browsing history?")) {
-      historyData = [];
-      save(KEY.history, historyData);
-      renderHistory();
-    }
+    if (!confirm("Delete all browsing history?")) return;
+
+    historyItems = [];
+    saveData();
+    renderHistory();
+    setStatus("History cleared.");
   });
 
+  // Clear all data
   $("clearDataButton")?.addEventListener("click", () => {
-    if (confirm("Clear EVOKER data?")) {
-      Object.values(KEY).forEach(key => {
-        localStorage.removeItem(key);
-      });
-      sessionStorage.removeItem(KEY.guest);
-      location.reload();
+    if (!confirm("Clear all EVOKER browser data?")) return;
+
+    Object.values(STORAGE).forEach(key => {
+      localStorage.removeItem(key);
+    });
+
+    location.reload();
+  });
+
+  setupSuggestions();
+
+  document.addEventListener("click", event => {
+    if (!event.target.closest("#searchForm")) {
+      $("suggestionsBox")?.classList.add("hidden");
+    }
+
+    if (
+      !event.target.closest("#browserMenu") &&
+      !event.target.closest("#menuButton")
+    ) {
+      $("browserMenu")?.classList.add("hidden");
     }
   });
 
-  renderTabs();
+  // Initial setup
+  const savedTheme = localStorage.getItem(STORAGE.theme) || "light";
+  const savedEngine = getSearchEngine();
+  const savedHomepage = localStorage.getItem(STORAGE.homepage) || "home";
 
-  const engine = getSearchEngine();
+  applyTheme(savedTheme);
 
   if ($("searchEngineSelect")) {
-    $("searchEngineSelect").value = engine;
+    $("searchEngineSelect").value = savedEngine;
   }
 
   if ($("settingsSearchEngine")) {
-    $("settingsSearchEngine").value = engine;
+    $("settingsSearchEngine").value = savedEngine;
   }
+
+  if ($("homepageSelect")) {
+    $("homepageSelect").value = savedHomepage;
+  }
+
+  renderQuickLinks();
+  createTab();
+
+  if (localStorage.getItem(STORAGE.guest) !== "true") {
+    openGuestPanel();
+  } else {
+    if ($("profileLabel")) $("profileLabel").textContent = "Guest";
+  }
+
+  setStatus("EVOKER is ready.");
 }
 
-document.addEventListener("DOMContentLoaded", initializeEvoker);
+initializeEvoker();
