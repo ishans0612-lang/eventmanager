@@ -3,111 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EventManager — Find Event Professionals</title>
-<meta name="description" content="Discover event planners, venues, caterers, photographers and event services near you.">
+<title>EventManager</title>
 <style>
-:root{--ink:#17243b;--muted:#68758b;--blue:#315efb;--teal:#12b8a6;--bg:#f6f8fc;--line:#e7ebf3}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-header{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(5%,calc((100% - 1180px)/2));gap:20px}
-.brand{font-size:23px;font-weight:800;letter-spacing:-.8px}.brand span{color:var(--blue)}
-nav{display:flex;gap:24px}nav a{color:#536078;text-decoration:none;font-size:14px;font-weight:600}
-.hero{max-width:1180px;margin:34px auto 0;padding:0 22px}
-.hero-box{min-height:440px;border-radius:28px;overflow:hidden;position:relative;background:linear-gradient(90deg,rgba(12,24,48,.88),rgba(12,24,48,.35)),url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=85') center/cover;display:flex;align-items:center;padding:clamp(28px,6vw,76px);color:#fff}
-.hero-content{max-width:690px}.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b9fff2;font-weight:800}
-h1{font-size:clamp(36px,5.5vw,64px);line-height:1.06;letter-spacing:-2px;margin:16px 0}
-.hero p{font-size:17px;line-height:1.7;color:#e4eaf4;max-width:580px}
-.search{margin-top:28px;background:#fff;border-radius:15px;padding:9px;display:flex;gap:8px;max-width:720px;box-shadow:0 12px 40px #06122b44}
-.search input,.search select{min-width:0;border:0;outline:0;padding:14px 12px;font-size:14px;color:var(--ink);background:#fff}
-.search input{flex:1}.search select{max-width:190px;border-left:1px solid var(--line)}
-.search button{border:0;border-radius:10px;background:var(--blue);color:#fff;padding:0 24px;font-weight:700;cursor:pointer}
-.section{max-width:1180px;margin:64px auto;padding:0 22px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}
-h2{font-size:29px;letter-spacing:-.8px;margin:0 0 8px}.sub{color:var(--muted);margin:0;line-height:1.6}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.category{background:#fff;border:1px solid var(--line);border-radius:17px;padding:22px;text-align:left;cursor:pointer;transition:.2s}
-.category:hover{transform:translateY(-3px);border-color:#b9c8ff;box-shadow:0 12px 30px #263b6710}
-.category .symbol{width:46px;height:46px;border-radius:13px;background:#eef2ff;color:var(--blue);display:grid;place-items:center;font-size:23px;margin-bottom:15px}
-.category strong{display:block;font-size:16px}.category small{display:block;color:var(--muted);margin-top:6px;line-height:1.4}
-.info{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:30px}
-.info h3{margin:0 0 10px;font-size:20px}.info p{color:var(--muted);line-height:1.7;margin:0}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}
-.step{background:#f7f9ff;border-radius:14px;padding:18px}.step b{color:var(--blue);font-size:13px}.step h3{font-size:16px;margin:8px 0}.step p{font-size:13px}
-footer{margin-top:65px;background:#14213a;color:#dce5f5;padding:35px 22px;text-align:center}footer p{font-size:13px;color:#aebbd0}
-@media(max-width:760px){header{padding:0 18px;height:66px}nav{gap:12px}nav a{font-size:12px}.grid{grid-template-columns:repeat(2,1fr)}.info{grid-template-columns:1fr}.search{flex-wrap:wrap}.search input{flex-basis:100%}.search select{flex:1;max-width:none;border-left:0;border-top:1px solid var(--line)}.search button{height:48px;flex:1}.steps{grid-template-columns:1fr}.hero-box{min-height:500px}}
-@media(max-width:420px){nav a:nth-child(2){display:none}.grid{gap:10px}.category{padding:16px}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fc;color:#18243a}
+header{background:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:24px;font-weight:bold;color:#315efb}
+.hero{margin:25px auto;max-width:1100px;padding:45px 25px;border-radius:20px;background:linear-gradient(120deg,#172c58,#315efb);color:white}
+.hero h1{font-size:clamp(32px,5vw,52px);margin:10px 0}
+.hero p{line-height:1.6}
+.search{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}
+input,select{padding:14px;border:0;border-radius:9px;font-size:15px;min-width:0}
+input{flex:1}
+button{padding:14px 22px;border:0;border-radius:9px;background:#12b8a6;color:white;font-weight:bold;cursor:pointer}
+main{max-width:1100px;margin:auto;padding:0 20px}
+h2{margin-top:40px}
+.categories,.results{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.category,.business{background:white;padding:20px;border-radius:13px;border:1px solid #e5eaf2}
+.category{cursor:pointer}
+.category:hover{border-color:#315efb}
+.category strong{display:block;margin-bottom:7px}
+.category small,.muted{color:#68758b;line-height:1.5}
+.filters{margin:20px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.filters select{border:1px solid #ddd;background:white}
+.status{background:white;padding:15px;border-radius:10px;margin:15px 0;color:#536078;line-height:1.5}
+.business h3{margin:8px 0}
+.business p{font-size:13px;color:#68758b;line-height:1.6;overflow-wrap:anywhere}
+.business a{display:inline-block;margin:5px 5px 0 0;color:#315efb;text-decoration:none;font-weight:bold;font-size:13px}
+footer{text-align:center;background:#17243b;color:white;padding:25px;margin-top:50px}
+@media(max-width:700px){.categories,.results{grid-template-columns:repeat(2,1fr)}.search input{flex-basis:100%}}
+@media(max-width:430px){.categories,.results{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="brand">Event<span>Manager</span></div>
-  <nav><a href="#categories">Categories</a><a href="#how">How it works</a><a href="#about">About</a></nav>
+ <div class="logo">EventManager</div>
+ <span>Find Event Services</span>
 </header>
-<main>
+
 <section class="hero">
- <div class="hero-box">
-  <div class="hero-content">
-   <div class="eyebrow">Plan better. Celebrate bigger.</div>
-   <h1>Find the right people for your next event.</h1>
-   <p>Discover event planners, decorators, venues, caterers, photographers and more in your city.</p>
-   <form class="search" id="searchForm">
-    <input id="location" type="text" placeholder="Enter city, district, PIN code or country" required>
-    <select id="categorySelect" aria-label="Choose a category">
-      <option value="event planners">All event services</option>
-      <option value="wedding planners">Wedding planners</option>
-      <option value="birthday party planners">Birthday planners</option>
-      <option value="event decorators">Decorators</option>
-      <option value="caterers">Caterers</option>
-      <option value="event photographers">Photographers</option>
-      <option value="event venues and banquet halls">Venues & halls</option>
-      <option value="DJs and sound services">DJ & sound</option>
-      <option value="event videographers">Videographers</option>
-    </select>
-    <button type="submit">Search</button>
-   </form>
-  </div>
- </div>
+ <div class="eyebrow">PLAN BETTER. CELEBRATE BIGGER.</div>
+ <h1>Find Event Services Near You</h1>
+ <p>Discover event venues, photographers, caterers and other local services.</p>
+
+ <form class="search" id="searchForm">
+  <input id="location" placeholder="Enter city, district or PIN code" required>
+  <select id="category">
+   <option value="all">All Services</option>
+   <option value="wedding">Wedding Venues</option>
+   <option value="party">Party Venues</option>
+   <option value="venue">Event Halls</option>
+   <option value="catering">Catering</option>
+   <option value="photo">Photography</option>
+   <option value="decoration">Party Shops</option>
+  </select>
+  <button id="searchBtn">Search</button>
+ </form>
 </section>
-<section class="section" id="categories">
- <div class="section-head"><div><h2>Explore services</h2><p class="sub">Choose a service and search in your preferred location.</p></div></div>
- <div class="grid">
-  <button class="category" data-category="wedding planners"><div class="symbol">♡</div><strong>Wedding Planners</strong><small>Make your special day memorable</small></button>
-  <button class="category" data-category="birthday party planners"><div class="symbol">✦</div><strong>Birthday Planners</strong><small>Parties for every age</small></button>
-  <button class="category" data-category="event decorators"><div class="symbol">◇</div><strong>Decoration</strong><small>Beautiful event setups</small></button>
-  <button class="category" data-category="caterers"><div class="symbol">♨</div><strong>Catering</strong><small>Food and catering services</small></button>
-  <button class="category" data-category="event photographers"><div class="symbol">◎</div><strong>Photography</strong><small>Capture every moment</small></button>
-  <button class="category" data-category="event videographers"><div class="symbol">▷</div><strong>Videography</strong><small>Keep the memories alive</small></button>
-  <button class="category" data-category="event venues and banquet halls"><div class="symbol">⌂</div><strong>Venues & Halls</strong><small>Find a place for your event</small></button>
-  <button class="category" data-category="DJs and sound services"><div class="symbol">♫</div><strong>DJ, Sound & Light</strong><small>Bring energy to your event</small></button>
- </div>
-</section>
-<section class="section" id="how">
- <div class="info">
-  <div><h3>Search businesses near your location</h3><p>Enter a city, district, PIN code or country. EventManager opens a location-specific Google Maps search so you can view real listings, photos, public contact details and directions when available.</p></div>
-  <div><h3>How it works</h3><div class="steps">
-   <div class="step"><b>01</b><h3>Choose a service</h3><p>Select the event service you need.</p></div>
-   <div class="step"><b>02</b><h3>Enter location</h3><p>Search in your city or nearby area.</p></div>
-   <div class="step"><b>03</b><h3>Compare & contact</h3><p>Review available listings on Maps.</p></div>
-  </div></div>
- </div>
-</section>
-<section class="section" id="about"><h2>About EventManager</h2><p class="sub">A simple starting point to discover event services. Google Maps listings are provided by Google; they are not verified or endorsed by EventManager.</p></section>
+
+<main>
+<h2>Explore Categories</h2>
+<div class="categories">
+ <div class="category" data-cat="wedding"><strong>Wedding Venues</strong><small>Wedding celebration places</small></div>
+ <div class="category" data-cat="party"><strong>Party Venues</strong><small>Birthday and party places</small></div>
+ <div class="category" data-cat="venue"><strong>Event Halls</strong><small>Banquet halls and venues</small></div>
+ <div class="category" data-cat="catering"><strong>Catering</strong><small>Restaurants and food services</small></div>
+ <div class="category" data-cat="photo"><strong>Photography</strong><small>Photographers and studios</small></div>
+ <div class="category" data-cat="decoration"><strong>Party Shops</strong><small>Party supplies and decoration</small></div>
+</div>
+
+<h2>Businesses Near You</h2>
+<div class="filters">
+ <label for="radius">Distance:</label>
+ <select id="radius">
+  <option value="5">5 KM</option>
+  <option value="10">10 KM</option>
+  <option value="25" selected>25 KM</option>
+  <option value="50">50 KM</option>
+  <option value="100">100 KM</option>
+  <option value="all">All Results</option>
+ </select>
+ <span id="count" class="muted"></span>
+</div>
+
+<div class="status" id="status">Enter a location and press Search.</div>
+<div class="results" id="results"></div>
+
+<p class="muted">Business information is sourced from OpenStreetMap. Details depend on available public map data. EventManager does not verify these listings.</p>
 </main>
-<footer><div class="brand">Event<span>Manager</span></div><p>Discover local event services. Plan with confidence.</p><p>© 2026 EventManager</p></footer>
+
+<footer>
+ <h3>EventManager</h3>
+Discover Local Event Services
+</footer>
+
 <script>
-const locationInput=document.getElementById('location');
-const categorySelect=document.getElementById('categorySelect');
-function searchMaps(){
- const place=locationInput.value.trim();
- if(!place){locationInput.focus();return;}
- const category=categorySelect.value;
- const query=encodeURIComponent(category+' near '+place);
- window.open('https://www.google.com/maps/search/?api=1&query='+query,'_blank','noopener');
+const $=id=>document.getElementById(id);
+let allResults=[];
+
+const queries={
+ all:['"amenity"~"events_venue|restaurant|community_centre|conference_centre"','"shop"~"party|photo|caterer"','"craft"="photographer"'],
+ wedding:['"amenity"="events_venue"','"leisure"="wedding_venue"','"building"="banquet_hall"'],
+ party:['"amenity"~"events_venue|community_centre"','"shop"="party"'],
+ venue:['"amenity"~"events_venue|conference_centre|community_centre"','"leisure"="venue"'],
+ catering:['"amenity"="restaurant"','"shop"="caterer"'],
+ photo:['"craft"="photographer"','"shop"="photo"'],
+ decoration:['"shop"="party"','"shop"="gift"']
+};
+
+function distance(a,b,c,d){
+ const rad=x=>x*Math.PI/180;
+ const x=rad(c-a),y=rad(d-b);
+ const v=Math.sin(x/2)**2+
+ Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(y/2)**2;
+ return 6371*2*Math.atan2(Math.sqrt(v),Math.sqrt(1-v));
 }
-document.getElementById('searchForm').addEventListener('submit',function(e){e.preventDefault();searchMaps();});
-document.querySelectorAll('.category').forEach(function(card){
- card.addEventListener('click',function(){
-  categorySelect.value=card.dataset.category;
-  locationInput.focus();
-  document.getElementById('searchForm').scrollIntoView({behavior:'smooth',block:'center'});
+
+function render(){
+ const r=$('radius').value;
+ const list=allResults.filter(x=>r==='all'||x.distance<=Number(r))
+ .sort((a,b)=>a.distance-b.distance);
+
+ $('count').textContent=list.length+' results';
+
+ if(!list.length){
+  $('results').innerHTML='<div class="business">No matching businesses found. Try another location or larger distance.</div>';
+  return;
+ }
+
+ $('results').innerHTML=list.map(x=>{
+  const t=x.tags;
+  const address=[
+   t['addr:housenumber'],t['addr:street'],
+   t['addr:suburb'],t['addr:city']||t['addr:town']||t['addr:village'],
+   t['addr:state'],t['addr:postcode']
+  ].filter(Boolean).join(', ');
+
+  const phone=t.phone||t['contact:phone'];
+  const website=t.website||t['contact:website'];
+
+  return `
+  <article class="business">
+   <h3>${safe(t.name||'Unnamed place')}</h3>
+   <p>${safe(address||'Address not available')}</p>
+   ${phone?'<p>Phone: '+safe(phone)+'</p>':''}
+   ${t.opening_hours?'<p>Hours: '+safe(t.opening_hours)+'</p>':''}
+   <p>Distance: ${x.distance.toFixed(1)} km</p>
+   ${phone?'<a href="tel:'+encodeURIComponent(phone)+'">Call</a>':''}
+   ${website&&/^https?:\/\//i.test(website)?'<a target="_blank" rel="noopener" href="'+safe(website)+'">Website</a>':''}
+   <a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+x.lat+','+x.lon+'">Directions</a>
+   <a target="_blank" rel="noopener" href="https://www.openstreetmap.org/'+x.type+'/'+x.id+'">Details</a>
+  </article>`;
+ }).join('');
+}
+
+function safe(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ })[c]);
+}
+
+$('radius').addEventListener('change',render);
+
+$('searchForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+
+ const place=$('location').value.trim();
+ if(!place)return;
+
+ $('searchBtn').disabled=true;
+ $('searchBtn').textContent='Searching...';
+ $('status').textContent='Finding location...';
+ $('results').innerHTML='';
+ allResults=[];
+
+ try{
+  const geoResponse=await fetch(
+   'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+
+   encodeURIComponent(place)
+  );
+
+  if(!geoResponse.ok)throw new Error('Location service unavailable. Try again later.');
+
+  const geo=await geoResponse.json();
+  if(!geo.length)throw new Error('Location not found. Check the spelling.');
+
+  const lat=Number(geo[0].lat);
+  const lon=Number(geo[0].lon);
+
+  $('status').textContent='Searching nearby businesses...';
+
+  const selected=queries[$('category').value];
+  const parts=[];
+
+  selected.forEach(q=>{
+   ['node','way','relation'].forEach(type=>{
+    parts.push(type+'(around:100000,'+lat+','+lon+')'+'['+q+'][name];');
+   });
+  });
+
+  const overpassQuery='[out:json][timeout:25];('+parts.join('')+');out center tags;';
+
+  const servers=[
+   'https://overpass-api.de/api/interpreter',
+   'https://overpass.kumi.systems/api/interpreter'
+  ];
+
+  let data=null;
+
+  for(const server of servers){
+   try{
+    const response=await fetch(server,{
+     method:'POST',
+     headers:{'Content-Type':'text/plain;charset=UTF-8'},
+     body:overpassQuery
+    });
+    if(!response.ok)continue;
+    data=await response.json();
+    break;
+   }catch(err){}
+  }
+
+  if(!data)throw new Error('Business search server is busy. Please try again.');
+
+  const unique=new Map();
+
+  (data.elements||[]).forEach(el=>{
+   const t=el.tags||{};
+   if(!t.name)return;
+
+   const p=el.center||el;
+   if(p.lat==null||p.lon==null)return;
+
+   const d=distance(lat,lon,Number(p.lat),Number(p.lon));
+   if(d>100)return;
+
+   unique.set(el.type+'/'+el.id,{
+    id:el.id,type:el.type,tags:t,
+    lat:Number(p.lat),lon:Number(p.lon),distance:d
+   });
+  });
+
+  allResults=[...unique.values()];
+
+  $('status').textContent=allResults.length?
+   'Search complete. These are mapped places, not verified recommendations.':
+   'No matching places found in this area. Try another category.';
+
+  render();
+
+ }catch(error){
+  $('status').textContent=error.message||'Something went wrong. Try again.';
+ }finally{
+  $('searchBtn').disabled=false;
+  $('searchBtn').textContent='Search';
+ }
+});
+
+document.querySelectorAll('.category').forEach(btn=>{
+ btn.addEventListener('click',()=>{
+  $('category').value=btn.dataset.cat;
+  $('location').focus();
+  $('searchForm').scrollIntoView({behavior:'smooth',block:'center'});
  });
 });
 </script>
