@@ -1,1 +1,558 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>EventManager Browser</title>
+
+    <meta name="description" content="EventManager - Your personal web browsing platform.">
+    <meta name="keywords" content="EventManager, Browser, Web Search">
+    <meta name="author" content="EventManager">
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- APPLICATION -->
+    <div class="browser-app">
+
+        <!-- HEADER -->
+        <header class="browser-header">
+
+            <div class="brand-area">
+                <div class="brand-logo">E</div>
+
+                <div class="brand-text">
+                    <h1>EventManager</h1>
+                    <span>Web Browser</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+
+                <button id="themeToggle" class="icon-button" title="Change Theme">
+                    <span>◐</span>
+                </button>
+
+                <button id="settingsButton" class="icon-button" title="Settings">
+                    <span>⚙</span>
+                </button>
+
+                <button id="profileButton" class="profile-button">
+                    Guest
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- TAB BAR -->
+        <section class="tab-section">
+
+            <div class="tabs-container" id="tabsContainer">
+
+                <button class="browser-tab active" data-tab="home">
+                    <span class="tab-icon">⌂</span>
+                    <span>New Tab</span>
+                    <span class="tab-close">×</span>
+                </button>
+
+            </div>
+
+            <button id="newTabButton" class="new-tab-button" title="New Tab">
+                +
+            </button>
+
+        </section>
+
+
+        <!-- NAVIGATION BAR -->
+        <nav class="navigation-bar">
+
+            <div class="navigation-controls">
+
+                <button id="backButton" class="nav-button" title="Back">
+                    ←
+                </button>
+
+                <button id="forwardButton" class="nav-button" title="Forward">
+                    →
+                </button>
+
+                <button id="reloadButton" class="nav-button" title="Reload">
+                    ↻
+                </button>
+
+                <button id="homeButton" class="nav-button" title="Home">
+                    ⌂
+                </button>
+
+            </div>
+
+
+            <!-- ADDRESS BAR -->
+            <form id="searchForm" class="address-form">
+
+                <span id="securityIcon" class="security-icon">
+                    ◉
+                </span>
+
+                <input
+                    type="text"
+                    id="addressInput"
+                    placeholder="Search or enter website address"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+
+                <button type="button" id="clearAddressButton" class="clear-address">
+                    ×
+                </button>
+
+                <button type="submit" class="address-search-button">
+                    Search
+                </button>
+
+            </form>
+
+
+            <div class="navigation-extra">
+
+                <button id="bookmarkButton" class="nav-button" title="Bookmark">
+                    ☆
+                </button>
+
+                <button id="menuButton" class="nav-button" title="Browser Menu">
+                    ⋮
+                </button>
+
+            </div>
+
+        </nav>
+
+
+        <!-- SEARCH SUGGESTIONS -->
+        <div id="suggestionsBox" class="suggestions-box hidden">
+
+            <div class="suggestions-heading">
+                Suggestions
+            </div>
+
+            <div id="suggestionsList"></div>
+
+        </div>
+
+
+        <!-- MAIN CONTENT -->
+        <main id="mainContent">
+
+
+            <!-- HOME PAGE -->
+            <section id="homePage" class="home-page">
+
+                <div class="home-content">
+
+                    <div class="home-logo">
+                        <div class="large-logo">E</div>
+                    </div>
+
+                    <h2>Discover Everything.</h2>
+
+                    <p>
+                        Browse the web, explore information and discover new things.
+                    </p>
+
+
+                    <!-- MAIN SEARCH -->
+                    <form id="homeSearchForm" class="home-search-form">
+
+                        <span class="search-icon">⌕</span>
+
+                        <input
+                            type="text"
+                            id="homeSearchInput"
+                            placeholder="Search the web or enter a URL"
+                            autocomplete="off"
+                        >
+
+                        <button type="submit">
+                            Search
+                        </button>
+
+                    </form>
+
+
+                    <!-- SEARCH ENGINE SELECTOR -->
+                    <div class="search-engine-area">
+
+                        <span>Search with:</span>
+
+                        <select id="searchEngineSelect">
+
+                            <option value="google">Google</option>
+                            <option value="bing">Bing</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- QUICK LINKS -->
+                    <section class="quick-links-section">
+
+                        <div class="section-title">
+                            <h3>Quick Access</h3>
+                            <button id="editShortcutsButton">
+                                Edit
+                            </button>
+                        </div>
+
+                        <div id="quickLinksContainer" class="quick-links-grid">
+
+                            <a href="https://www.google.com" class="quick-link" target="_blank" rel="noopener">
+                                <span>G</span>
+                                <small>Google</small>
+                            </a>
+
+                            <a href="https://www.youtube.com" class="quick-link" target="_blank" rel="noopener">
+                                <span>▶</span>
+                                <small>YouTube</small>
+                            </a>
+
+                            <a href="https://www.wikipedia.org" class="quick-link" target="_blank" rel="noopener">
+                                <span>W</span>
+                                <small>Wikipedia</small>
+                            </a>
+
+                            <a href="https://www.github.com" class="quick-link" target="_blank" rel="noopener">
+                                <span>⌘</span>
+                                <small>GitHub</small>
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+
+            <!-- WEBSITE VIEWER -->
+            <section id="websitePage" class="website-page hidden">
+
+                <div class="website-toolbar">
+
+                    <span id="currentWebsiteTitle">
+                        Website
+                    </span>
+
+                    <button id="openExternalButton">
+                        Open Externally ↗
+                    </button>
+
+                </div>
+
+                <div class="website-warning" id="websiteWarning">
+
+                    Some websites do not allow embedding inside another website.
+                    If a page does not load, use Open Externally.
+
+                </div>
+
+                <iframe
+                    id="websiteFrame"
+                    title="EventManager Website Viewer"
+                    src="about:blank"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    loading="lazy"
+                    sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads"
+                ></iframe>
+
+            </section>
+
+
+            <!-- DISCOVER PAGE -->
+            <section id="discoverPage" class="discover-page hidden">
+
+                <div class="page-heading">
+                    <h2>Discover</h2>
+                    <p>Explore different areas of the internet.</p>
+                </div>
+
+                <div class="discover-grid">
+
+                    <button class="discover-card" data-search="web">
+                        <span>🌐</span>
+                        <strong>Web Search</strong>
+                        <small>Explore websites</small>
+                    </button>
+
+                    <button class="discover-card" data-search="images">
+                        <span>▧</span>
+                        <strong>Images</strong>
+                        <small>Discover pictures</small>
+                    </button>
+
+                    <button class="discover-card" data-search="videos">
+                        <span>▶</span>
+                        <strong>Videos</strong>
+                        <small>Find videos</small>
+                    </button>
+
+                    <button class="discover-card" data-search="news">
+                        <span>▤</span>
+                        <strong>News</strong>
+                        <small>Latest updates</small>
+                    </button>
+
+                    <button class="discover-card" data-search="shopping">
+                        <span>▣</span>
+                        <strong>Shopping</strong>
+                        <small>Explore products</small>
+                    </button>
+
+                    <button class="discover-card" data-search="maps">
+                        <span>⌖</span>
+                        <strong>Maps</strong>
+                        <small>Discover places</small>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- NEWS PAGE -->
+            <section id="newsPage" class="news-page hidden">
+
+                <div class="page-heading">
+
+                    <h2>Latest News</h2>
+
+                    <p>Discover news from around the world.</p>
+
+                    <button id="refreshNewsButton">
+                        Refresh News
+                    </button>
+
+                </div>
+
+                <div class="news-filters">
+
+                    <button class="news-filter active" data-category="all">All</button>
+                    <button class="news-filter" data-category="india">India</button>
+                    <button class="news-filter" data-category="world">World</button>
+                    <button class="news-filter" data-category="technology">Technology</button>
+                    <button class="news-filter" data-category="sports">Sports</button>
+                    <button class="news-filter" data-category="business">Business</button>
+
+                </div>
+
+                <div id="newsContainer" class="news-grid">
+
+                    <div class="loading-message">
+                        News will appear here.
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- BOOKMARKS PAGE -->
+            <section id="bookmarksPage" class="bookmarks-page hidden">
+
+                <div class="page-heading">
+
+                    <h2>Bookmarks</h2>
+
+                    <p>Your saved websites.</p>
+
+                </div>
+
+                <div id="bookmarksContainer" class="saved-list">
+
+                    <p>No bookmarks yet.</p>
+
+                </div>
+
+            </section>
+
+
+            <!-- HISTORY PAGE -->
+            <section id="historyPage" class="history-page hidden">
+
+                <div class="page-heading">
+
+                    <h2>Browsing History</h2>
+
+                    <p>Recently visited websites.</p>
+
+                    <button id="clearHistoryButton">
+                        Clear History
+                    </button>
+
+                </div>
+
+                <div id="historyContainer" class="saved-list">
+
+                    <p>No browsing history.</p>
+
+                </div>
+
+            </section>
+
+
+            <!-- DOWNLOADS PAGE -->
+            <section id="downloadsPage" class="downloads-page hidden">
+
+                <div class="page-heading">
+
+                    <h2>Downloads</h2>
+
+                    <p>Manage your download links.</p>
+
+                </div>
+
+                <div id="downloadsContainer" class="saved-list">
+
+                    <p>Download information will appear here.</p>
+
+                </div>
+
+            </section>
+
+
+            <!-- SETTINGS PAGE -->
+            <section id="settingsPage" class="settings-page hidden">
+
+                <div class="page-heading">
+
+                    <h2>Browser Settings</h2>
+
+                    <p>Customize your EventManager experience.</p>
+
+                </div>
+
+                <div class="settings-container">
+
+                    <div class="setting-item">
+
+                        <div>
+                            <strong>Search Engine</strong>
+                            <p>Choose your default search provider.</p>
+                        </div>
+
+                        <select id="settingsSearchEngine">
+
+                            <option value="google">Google</option>
+                            <option value="bing">Bing</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="setting-item">
+
+                        <div>
+                            <strong>Appearance</strong>
+                            <p>Choose your browser theme.</p>
+                        </div>
+
+                        <select id="appearanceSelect">
+
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="setting-item">
+
+                        <div>
+                            <strong>Homepage</strong>
+                            <p>Choose what appears when opening a new tab.</p>
+                        </div>
+
+                        <select id="homepageSelect">
+
+                            <option value="home">Home</option>
+                            <option value="discover">Discover</option>
+                            <option value="news">News</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="setting-item">
+
+                        <div>
+                            <strong>Clear Browsing Data</strong>
+                            <p>Remove saved browsing history.</p>
+                        </div>
+
+                        <button id="clearDataButton">
+                            Clear Data
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+
+        <!-- BROWSER MENU -->
+        <div id="browserMenu" class="browser-menu hidden">
+
+            <button data-page="discover">Discover</button>
+            <button data-page="news">Latest News</button>
+            <button data-page="bookmarks">Bookmarks</button>
+            <button data-page="history">History</button>
+            <button data-page="downloads">Downloads</button>
+            <button data-page="settings">Settings</button>
+
+        </div>
+
+
+        <!-- STATUS BAR -->
+        <footer class="browser-footer">
+
+            <span>EventManager Browser</span>
+
+            <span id="connectionStatus">
+                Ready
+            </span>
+
+        </footer>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+</html>
